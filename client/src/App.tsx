@@ -2,25 +2,15 @@ import React from 'react';
 import logo from './public/logo.svg';
 import './styles/App.css';
 import NavBar from './modules/NavBar';
+import Home from './modules/Home';
 
 function App() {
   return (
     <div className="App">
+      <header>
       <NavBar />
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
       </header>
+      <Home />
     </div>
   );
 }

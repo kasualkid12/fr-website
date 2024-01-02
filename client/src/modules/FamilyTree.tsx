@@ -1,7 +1,7 @@
 import React from 'react';
 
 function FamilyTree() {
-  return <div></div>;
+  return <div className='FamilyTree'></div>;
 }
 
 export default FamilyTree;

@@ -9,6 +9,7 @@
   /* border: 1px solid red; */
   display: flex;
   flex-direction: row;
+  position: fixed;
   /* background-color: #faf9f6; */
   background-color: #fafaf6;
   filter: drop-shadow(2px 1px 2px #000000);
@@ -60,5 +61,11 @@ a {
   width: 2.5rem;
   height: 2.5rem;
   display: block;
-  background: red;
+  border: 1px solid red;
+  overflow: hidden;
+}
+
+.Pfp {
+  max-width: 100%;
+  max-height: 100%;
 }

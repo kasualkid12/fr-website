@@ -1,6 +1,6 @@
 import React from 'react';
 
-import '../styles/NavBar.css';
+import '../styles/NavBar.scss';
 import crest from '../public/Hershey Crest.512x(Transparent).png';
 import defaultPfp from '../public/Default user.svg'
 

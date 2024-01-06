@@ -1,7 +1,5 @@
-@font-face {
-  font-family: 'Hershey';
-  src: url(../public/fonts/English\ 111\ Vivace\ Regular.otf);
-}
+@import './fonts';
+@import './colors';
 
 .Home {
   width: 100%;
@@ -20,10 +18,12 @@
 }
 
 .Tagline {
-  background-color: #faf9f6;
-  width: 60vh;
-  height: 20vh;
+  background-color: $darkmain;
+  color: $lightmain;
+  width: 30%;
+  height: 20%;
   filter: drop-shadow(2px 1px 2px #000000);
+  text-align: center;
   flex-direction: column;
   justify-content: center;
   display: flex;
@@ -31,7 +31,8 @@
 
 .TaglineHeader {
   font-family: 'Hershey';
-  color: #ba7738;
+  color: $titlelight;
+  font-size: 3em;
 }
 
 .Info {

@@ -1,7 +1,5 @@
-@font-face {
-  font-family: 'Hershey';
-  src: url(../public/fonts/English\ 111\ Vivace\ Regular.otf);
-}
+@import './fonts';
+@import './colors';
 
 .Navbar {
   width: 100%;
@@ -10,7 +8,7 @@
   flex-direction: row;
   position: fixed;
   z-index: 99;
-  background-color: #fafaf6;
+  background-color: $darkmain;
   filter: drop-shadow(2px 1px 2px #000000);
 }
 
@@ -23,7 +21,7 @@
   width: 5rem;
   height: 5rem;
   display: block;
-  background: #faf9f6;
+  background: $darkmain;
 }
 
 .Crest {
@@ -32,26 +30,28 @@
 }
 
 .Title {
-  top: 50%;
-  transform: translateY(5%);
+  margin: auto;
   margin-left: 1rem;
   margin-right: 1rem;
   font-size: xx-large;
   font-family: 'Hershey';
-  color: #ba7738;
+  color: $titlelight;
 }
 
 a {
-  top: 50%;
-  transform: translateY(20%);
+  // top: 50%;
+  // transform: translateY(20%);
+  margin: auto;
   margin-left: 1rem;
+  margin-right: 0;
+  text-align: center;
   font-size: x-large;
-  color: black;
+  color: $lightmain;
   text-decoration: none;
 }
 
 a:hover {
-  color: blue;
+  color: $linkdark;
 }
 
 .ProfileImage {
@@ -64,7 +64,7 @@ a:hover {
   width: 2.5rem;
   height: 2.5rem;
   display: block;
-  border: 1px solid red;
+  border: 2px solid $lightmain;
   overflow: hidden;
 }
 

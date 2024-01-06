@@ -11,8 +11,8 @@ function NavBar() {
         <img className="Crest" alt="The family crest" src={crest} />
       </div>
       <div className='Title'>Hershey Reunion</div>
-      <a href="./Home.tsx">Home</a>
-      <a href="./FamilyTree.tsx">Family Tree</a>
+      <a href="/">Home</a>
+      <a href="/family-tree">Family Tree</a>
       <div className="ProfileImage">
         <img className='Pfp' alt='pfp' src={defaultPfp} />
       </div>

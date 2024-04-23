@@ -10,65 +10,127 @@
   z-index: 99;
   background-color: $darkmain;
   filter: drop-shadow(2px 1px 2px #000000);
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
 }
 
-.FamilySeal {
-  top: 50%;
-  -ms-transform: translateY(-50%);
-  transform: translateY(10%);
-  margin-left: 3rem;
+.CenterContent {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  position: relative;
+}
+
+.FamilySeal, .ProfileImage {
   border-radius: 50%;
-  width: 5rem;
-  height: 5rem;
+  width: 2.5rem;
+  height: 2.5rem;
   display: block;
-  background: $darkmain;
+  overflow: hidden;
+  margin-right: 15px;
+  transform: translateY(0%);
 }
 
-.Crest {
-  max-height: 100%;
+.Crest, .Pfp {
   max-width: 100%;
+  max-height: 100%;
 }
 
 .Title {
-  margin: auto;
-  margin-left: 1rem;
-  margin-right: 1rem;
   font-size: xx-large;
   font-family: 'Hershey';
   color: $titlelight;
 }
 
-a {
-  // top: 50%;
-  // transform: translateY(20%);
-  margin: auto;
-  margin-left: 1rem;
-  margin-right: 0;
-  text-align: center;
-  font-size: x-large;
-  color: $lightmain;
-  text-decoration: none;
+.Hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 2rem;
+  height: 1.5rem;
+  cursor: pointer;
+  transform: rotate(0deg);
+  transition: 0.5s ease-in-out;
 }
 
-a:hover {
+.Bar {
+  background-color: $titlelight;
+  height: 3px;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.Hamburger.open .Bar:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.Hamburger.open .Bar:nth-child(2) {
+  opacity: 0;
+  transform: scale(0);
+}
+
+.Hamburger.open .Bar:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+.DropdownMenu {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 3rem;
+  right: 0;
+  // background-color: $darkmain;
+  width: 100%;
+  z-index: 100;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: all .75s ease-in-out;
+}
+
+.Navbar .DropdownMenu.open {
+  max-height: 200px; // Adjust based on content size
+  opacity: 1;
+}
+
+.DropdownMenu a {
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  color: $lightmain;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.DropdownMenu a:hover {
   color: $linkdark;
 }
 
-.ProfileImage {
-  top: 50%;
-  -ms-transform: translateY(-50%);
-  transform: translateY(10%);
-  margin-left: auto;
-  margin-right: 3rem;
-  border-radius: 50%;
-  width: 2.5rem;
-  height: 2.5rem;
-  display: block;
-  border: 2px solid $lightmain;
-  overflow: hidden;
+.DropdownMenu::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%; // Height of the gradient effect
+  background: linear-gradient(to bottom, rgba(29, 25, 16, 0.8) 0%, rgba(29, 25, 16, 0.3) 100%); // Updated gradient
+  pointer-events: none; // Ensure clicks pass through the gradient
+  z-index: 1;
 }
 
-.Pfp {
-  max-width: 100%;
-  max-height: 100%;
+@media (min-width: 768px) {
+  .Hamburger, .DropdownMenu {
+    display: none;
+  }
+  .Title {
+    display: block;
+    margin: auto;
+  }
+  .FamilySeal, .ProfileImage {
+    width: 5rem;
+    height: 5rem;
+  }
 }

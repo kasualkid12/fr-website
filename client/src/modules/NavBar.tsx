@@ -20,13 +20,13 @@ function NavBar() {
         <div className="Title">Hershey Reunion</div>
       </div>
       <div className={`DropdownMenu ${isOpen ? 'open' : ''}`}>
-          <a href="/">Home</a>
-          <a href="/family-tree">Family Tree</a>
+          <a className="NavItem" href="/">Home</a>
+          <a className="NavItem" href="/family-tree">Family Tree</a>
         </div>
       {/* Can be added back when accounts are added */}
-      <div className="ProfileImage">
+      {/* <div className="ProfileImage">
         <img className="Pfp" alt="pfp" src={defaultPfp} />
-      </div>
+      </div> */}
     </div>
   );
 }

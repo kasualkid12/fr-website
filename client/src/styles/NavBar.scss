@@ -98,10 +98,12 @@
 }
 
 .DropdownMenu a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.5rem 1rem;
   text-decoration: none;
   color: $lightmain;
-  text-align: center;
   position: relative;
   z-index: 2;
 }
@@ -124,6 +126,10 @@
   ); // Updated gradient
   pointer-events: none; // Ensure clicks pass through the gradient
   z-index: 1;
+}
+
+.NavItem {
+  font-size: x-large;
 }
 
 @media (min-width: 768px) {

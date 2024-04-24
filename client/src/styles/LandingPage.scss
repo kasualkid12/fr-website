@@ -1,0 +1,124 @@
+@import './fonts';
+@import './colors';
+
+.LandingPage {
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background-image: url('../public/Reunion\ 2023\ Earl\ Park.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;  // Use cover to ensure the background image always covers the viewport
+  background-position: 87%;  // Center the background image
+  background-attachment: fixed;  // Keep the background fixed during scrolling
+  background-color: $darkmain;
+}
+
+.FrontPage {
+  height: 100vh;  // Make sure this always takes up the full viewport height
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.Tagline {
+  background-color: rgba($darkmain, 0.8);  // Use RGBA for some transparency
+  color: $lightmain;
+  margin: auto;  // Center the tagline vertically and horizontally
+  padding: 20px;
+  box-shadow: 2px 1px 2px #000000;  // Adjusted for consistency
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 90%;  // Ensure it doesn’t grow too large on bigger screens
+}
+
+.TaglineHeader {
+  font-family: 'Hershey';
+  color: $titlelight;
+  font-size: 2em;  // Adjust the size to be responsive
+  margin: 0;  // Remove default margins
+}
+
+.Info {
+  width: 100%;
+  padding: 20px;
+  color: $lightmain;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .FrontPage {
+    justify-content: start;
+  }
+
+  .Tagline {
+    width: 60%;  // Larger screens can accommodate a wider tagline area
+    padding: 40px;  // More padding for a better layout on larger screens
+  }
+
+  .TaglineHeader {
+    font-size: 3em;  // Larger text for larger displays
+  }
+}
+
+@media (min-width: 1080px) {
+  .FrontPage {
+    justify-content: start;
+  }
+
+  .Tagline {
+    width: 40%;  // Larger screens can accommodate a wider tagline area
+    padding: 40px;  // More padding for a better layout on larger screens
+  }
+
+  .TaglineHeader {
+    font-size: 4em;  // Larger text for larger displays
+  }
+}
+
+// .Home {
+//   padding-top: 20px;
+//   height: 100vh;
+//   width: 100%;
+//   background-image: url('../public/Reunion\ 2023\ Earl\ Park.jpg');
+//   background-repeat: no-repeat;
+//   background-size: 100vh;
+//   background-color: $darkmain;
+// }
+
+// .FrontPage {
+//   height: 100%;
+//   width: 100%;
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: center;
+// }
+
+// .Tagline {
+//   background-color: $darkmain;
+//   color: $lightmain;
+//   height: 20%;
+//   width: 30%;
+//   filter: drop-shadow(2px 1px 2px #000000);
+//   text-align: center;
+//   flex-direction: column;
+//   justify-content: center;
+//   display: flex;
+// }
+
+// .TaglineHeader {
+//   font-family: 'Hershey';
+//   color: $titlelight;
+//   font-size: 3em;
+// }
+
+// .Info {
+//   height: 50%;
+//   width: 100%;
+// }

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import '../styles/NavBar.scss';
 import crest from '../public/Hershey Crest.512x(Transparent).png';
-import defaultPfp from '../public/Default user.svg';
+// Can be added back when accounts are added
+// import defaultPfp from '../public/Default user.svg';
 
 function NavBar() {
   const [isOpen, setIsOpen] = useState(false);

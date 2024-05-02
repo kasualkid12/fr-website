@@ -14,9 +14,10 @@ var (
 	user     string
 	password string
 	dbname   string
+	key      string
 )
 
-func GrabEnv() (string, int, string, string, string) {
+func GrabEnv() (string, int, string, string, string, string) {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -27,6 +28,7 @@ func GrabEnv() (string, int, string, string, string) {
 	user = os.Getenv("PGUSER")
 	password = os.Getenv("PGPASSWORD")
 	dbname = os.Getenv("PGDBNAME")
+	key = os.Getenv("KEY")
 
 	var errConv error
 	port, errConv = strconv.Atoi(portStr)
@@ -34,5 +36,5 @@ func GrabEnv() (string, int, string, string, string) {
 		log.Fatalf("Error converting PGPORT to int: %v", errConv)
 	}
 
-	return host, port, user, password, dbname
+	return host, port, user, password, dbname, key
 }

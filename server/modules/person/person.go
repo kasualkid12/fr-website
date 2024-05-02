@@ -1,7 +1,8 @@
-package addperson
+package person
 
 import (
 	"database/sql"
+	"fmt"
 
 	_ "github.com/lib/pq"
 )
@@ -21,7 +22,32 @@ func AddPerson(db *sql.DB, p Person) error {
 	query := `INSERT INTO persons (name, birth_date, death_date, gender, profile_id, photo_url) VALUES ($1, $2, $3, $4, $5, $6)`
 	_, err := db.Exec(query, p.Name, p.BirthDate, p.DeathDate, p.Gender, p.ProfileID, p.PhotoURL)
 	if err != nil {
-		return err
+		return fmt.Errorf("AddPersons insert error: %v", err)
 	}
 	return nil
+}
+
+func GetPersons(db *sql.DB) (*sql.Rows, error) {
+	query := `
+    WITH RECURSIVE descendents AS (
+        SELECT person_id, name
+        FROM persons
+        WHERE name = 'John Doe'
+        UNION ALL
+        SELECT p.person_id, p.name
+        FROM persons p
+        INNER JOIN relationships r ON p.person_id = r.person2_id
+        INNER JOIN descendents d ON r.person1_id = d.person_id
+        WHERE r.relationship_type = 'child'
+    )
+    SELECT * FROM descendents;
+    `
+
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("GetPersons rows error: %v", err)
+	}
+	defer rows.Close()
+
+	return rows, nil
 }

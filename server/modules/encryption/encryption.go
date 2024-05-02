@@ -5,6 +5,7 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/hex"
+	"fmt"
 	"io"
 
 	_ "github.com/lib/pq"
@@ -13,14 +14,14 @@ import (
 func Encrypt(data string, key string) (string, error) {
 	block, err := aes.NewCipher([]byte(key))
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("Encrypt cypher error: %v", err)
 	}
 
 	b := []byte(data)
 	ciphertext := make([]byte, aes.BlockSize+len(b))
 	iv := ciphertext[:aes.BlockSize]
 	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
-		return "", err
+		return "", fmt.Errorf("Encrypt read error: %v", err)
 	}
 
 	stream := cipher.NewCFBEncrypter(block, iv)
@@ -31,16 +32,16 @@ func Encrypt(data string, key string) (string, error) {
 func Decrypt(encryptedString string, key string) (string, error) {
 	ciphertext, err := hex.DecodeString(encryptedString)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("Decrypt decode error: %v", err)
 	}
 
 	block, err := aes.NewCipher([]byte(key))
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("Decrypt cypher error: %v", err)
 	}
 
 	if len(ciphertext) < aes.BlockSize {
-		return "", err
+		return "", fmt.Errorf("Decrypt block size error: %v", err)
 	}
 	iv := ciphertext[:aes.BlockSize]
 	ciphertext = ciphertext[aes.BlockSize:]

@@ -33,6 +33,53 @@ func TestAddPerson(t *testing.T) {
 	assert.NoError(t, mock.ExpectationsWereMet())
 }
 
+func TestDeletePerson(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
+	// Setup expectations
+	personID := 1
+	mock.ExpectExec("DELETE FROM persons WHERE person_id =").
+		WithArgs(personID).
+		WillReturnResult(sqlmock.NewResult(0, 1)) // Mock the result: 1 row affected
+
+	// Call the function with the mock database
+	err = DeletePerson(db, personID)
+	assert.NoError(t, err)
+
+	// Ensure all expectations were met
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+func TestDeletePersonNoRowsAffected(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
+	// Setup expectations for no rows being deleted
+	personID := 99
+	mock.ExpectExec("DELETE FROM persons WHERE person_id =").
+		WithArgs(personID).
+		WillReturnResult(sqlmock.NewResult(0, 0)) // Mock the result: no rows affected
+
+	// Call the function with the mock database
+	err = DeletePerson(db, personID)
+	assert.Error(t, err, "expected an error for no rows affected")
+	assert.Contains(t, err.Error(), "no person was deleted")
+
+	// Ensure all expectations were met
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
 func TestGetPersons(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	assert.NoError(t, err)

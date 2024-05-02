@@ -27,6 +27,26 @@ func AddPerson(db *sql.DB, p Person) error {
 	return nil
 }
 
+// DeletePerson removes a person from the database by ID
+func DeletePerson(db *sql.DB, personID int) error {
+	query := `DELETE FROM persons WHERE person_id = $1`
+	result, err := db.Exec(query, personID)
+	if err != nil {
+		return fmt.Errorf("DeletePerson delete error: %v", err)
+	}
+
+	// Optional: Check if the row was actually deleted
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("DeletePerson rows affected error: %v", err)
+	}
+	if rowsAffected == 0 {
+		return fmt.Errorf("no person was deleted with the ID: %d", personID)
+	}
+
+	return nil
+}
+
 func GetPersons(db *sql.DB) (*sql.Rows, error) {
 	query := `
     WITH RECURSIVE descendents AS (

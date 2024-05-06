@@ -21,16 +21,16 @@ func TestGrabEnv(t *testing.T) {
 	_ = os.Setenv("PGUSER", "testuser")
 	_ = os.Setenv("PGPASSWORD", "testpass")
 	_ = os.Setenv("PGDBNAME", "testdb")
-	_ = os.Setenv("KEY", "secret")
+	_ = os.Setenv("KEYALIAS", "secret")
 
-	host, port, user, password, dbname, key := GrabEnv()
+	host, port, user, password, dbname, keyAlias := GrabEnv()
 
 	assert.Equal(t, "localhost", host)
 	assert.Equal(t, 5432, port)
 	assert.Equal(t, "testuser", user)
 	assert.Equal(t, "testpass", password)
 	assert.Equal(t, "testdb", dbname)
-	assert.Equal(t, "secret", key)
+	assert.Equal(t, "secret", keyAlias)
 }
 
 func TestGrabEnvFailure(t *testing.T) {

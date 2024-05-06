@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log"
 
-	// "github.com/aws/aws-sdk-go-v2/aws"
-	// "github.com/kasualkid12/fr-website/server/modules/encryption"
 	"github.com/kasualkid12/fr-website/server/modules/encryption"
 	grabenv "github.com/kasualkid12/fr-website/server/modules/grabEnv"
 	_ "github.com/lib/pq"

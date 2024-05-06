@@ -15,7 +15,7 @@ var (
 	user     string
 	password string
 	dbname   string
-	key      string
+	keyAlias string
 )
 
 var loadEnv = godotenv.Load
@@ -35,7 +35,7 @@ func readEnv() (string, int, string, string, string, string) {
 	user = os.Getenv("PGUSER")
 	password = os.Getenv("PGPASSWORD")
 	dbname = os.Getenv("PGDBNAME")
-	key = os.Getenv("KEY")
+	keyAlias = os.Getenv("KEYALIAS")
 
 	var err error
 	port, err = strconv.Atoi(portStr)
@@ -43,5 +43,5 @@ func readEnv() (string, int, string, string, string, string) {
 		panic(fmt.Sprintf("Error converting PGPORT to int: %v", err))
 	}
 
-	return host, port, user, password, dbname, key
+	return host, port, user, password, dbname, keyAlias
 }

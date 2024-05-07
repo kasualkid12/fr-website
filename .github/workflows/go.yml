@@ -25,3 +25,5 @@ jobs:
     - name: Test
       working-directory: ./server
       run: go test -v ./...
+      env:
+        AWS_REGION: us-east-1

@@ -21,16 +21,14 @@ func TestGrabEnv(t *testing.T) {
 	_ = os.Setenv("PGUSER", "testuser")
 	_ = os.Setenv("PGPASSWORD", "testpass")
 	_ = os.Setenv("PGDBNAME", "testdb")
-	_ = os.Setenv("KEYALIAS", "secret")
 
-	host, port, user, password, dbname, keyAlias := GrabEnv()
+	host, port, user, password, dbname := GrabEnv()
 
 	assert.Equal(t, "localhost", host)
 	assert.Equal(t, 5432, port)
 	assert.Equal(t, "testuser", user)
 	assert.Equal(t, "testpass", password)
 	assert.Equal(t, "testdb", dbname)
-	assert.Equal(t, "secret", keyAlias)
 }
 
 func TestGrabEnvFailure(t *testing.T) {
@@ -45,7 +43,7 @@ func TestGrabEnvFailure(t *testing.T) {
 
 	// Running the function and capturing the log output
 	assert.PanicsWithValue(t, "Error converting PGPORT to int: strconv.Atoi: parsing \"notanumber\": invalid syntax", func() {
-		_, _, _, _, _, _ = GrabEnv()
+		_, _, _, _, _ = GrabEnv()
 	}, "Expected panic for invalid PGPORT")
 
 	// Resetting PGPORT to a valid value for other tests

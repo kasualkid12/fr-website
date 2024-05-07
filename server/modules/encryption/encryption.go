@@ -13,11 +13,17 @@ import (
 )
 
 var KMSClient *kms.Client
+var keyAlias string
 
 func init() {
 	region := os.Getenv("AWS_REGION")
 	if region == "" {
 		log.Fatal("AWS region not set in the environment variables")
+	}
+
+	keyAlias = os.Getenv("KEY_ALIAS")
+	if keyAlias == "" {
+		log.Fatal("Key alias not set in the environment variables")
 	}
 
 	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(region))
@@ -27,7 +33,7 @@ func init() {
 	KMSClient = kms.NewFromConfig(cfg)
 }
 
-func EncryptWithKMS(data string, keyAlias string) (string, error) {
+func EncryptWithKMS(data string) (string, error) {
 	input := &kms.EncryptInput{
 		KeyId:     aws.String(keyAlias),
 		Plaintext: []byte(data),
@@ -41,7 +47,7 @@ func EncryptWithKMS(data string, keyAlias string) (string, error) {
 	return base64.StdEncoding.EncodeToString(result.CiphertextBlob), nil
 }
 
-func DecryptWithKMS(encryptedData string, keyAlias string) (string, error) {
+func DecryptWithKMS(encryptedData string) (string, error) {
 	data, err := base64.StdEncoding.DecodeString(encryptedData)
 	if err != nil {
 		return "", fmt.Errorf("failed to decode data: %v", err)

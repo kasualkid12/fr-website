@@ -15,12 +15,11 @@ var (
 	user     string
 	password string
 	dbname   string
-	keyAlias string
 )
 
 var loadEnv = godotenv.Load
 
-func GrabEnv() (string, int, string, string, string, string) {
+func GrabEnv() (string, int, string, string, string) {
 	err := loadEnv()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -29,13 +28,12 @@ func GrabEnv() (string, int, string, string, string, string) {
 	return readEnv()
 }
 
-func readEnv() (string, int, string, string, string, string) {
+func readEnv() (string, int, string, string, string) {
 	host = os.Getenv("PGHOST")
 	portStr := os.Getenv("PGPORT")
 	user = os.Getenv("PGUSER")
 	password = os.Getenv("PGPASSWORD")
 	dbname = os.Getenv("PGDBNAME")
-	keyAlias = os.Getenv("KEYALIAS")
 
 	var err error
 	port, err = strconv.Atoi(portStr)
@@ -43,5 +41,5 @@ func readEnv() (string, int, string, string, string, string) {
 		panic(fmt.Sprintf("Error converting PGPORT to int: %v", err))
 	}
 
-	return host, port, user, password, dbname, keyAlias
+	return host, port, user, password, dbname
 }

@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	host, port, user, password, dbname, keyAlias := grabenv.GrabEnv()
+	host, port, user, password, dbname := grabenv.GrabEnv()
 
 	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
@@ -30,13 +30,13 @@ func main() {
 
 	originalText := "Hello, world!"
 
-	encryptedText, err := encryption.EncryptWithKMS(originalText, keyAlias)
+	encryptedText, err := encryption.EncryptWithKMS(originalText)
 	if err != nil {
 		log.Fatal("Encryption error:", err)
 	}
 	fmt.Println("Encrypted:", encryptedText)
 
-	decryptedText, err := encryption.DecryptWithKMS(encryptedText, keyAlias)
+	decryptedText, err := encryption.DecryptWithKMS(encryptedText)
 	if err != nil {
 		log.Fatal("Decryption error:", err)
 	}

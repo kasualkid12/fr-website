@@ -1,41 +1,42 @@
 package encryption
 
-// import (
-// 	"testing"
+import (
+	"testing"
 
-// 	"github.com/stretchr/testify/assert"
-// )
+	"github.com/stretchr/testify/assert"
+)
 
-// func TestEncryptDecrypt(t *testing.T) {
-// 	key := "thiskeyis32byteslongandusedhere!"
-// 	data := "Hello, world!"
+func TestEncryptAndDecrypt(t *testing.T) {
+	// Test data
+	originalData := "hello world"
 
-// 	// Test encryption
-// 	encryptedData, err := Encrypt(data, key)
-// 	assert.NoError(t, err, "Encryption should not produce an error")
-// 	assert.NotEmpty(t, encryptedData, "Encrypted data should not be empty")
+	// Encrypt data
+	encryptedData, err := EncryptWithKMS(originalData)
+	assert.NoError(t, err, "EncryptWithKMS should not return an error")
 
-// 	// Test decryption
-// 	decryptedData, err := Decrypt(encryptedData, key)
-// 	assert.NoError(t, err, "Decryption should not produce an error")
-// 	assert.Equal(t, data, decryptedData, "Decrypted data should match original")
-// }
+	// Decrypt data
+	decryptedData, err := DecryptWithKMS(encryptedData)
+	assert.NoError(t, err, "DecryptWithKMS should not return an error")
 
-// func TestEncryptError(t *testing.T) {
-// 	data := "data to encrypt"
-// 	shortKey := "short"
+	// Check if decrypted data matches original data
+	assert.Equal(t, originalData, decryptedData, "Decrypted data should match original data")
+}
 
-// 	// Test encryption with a short key
-// 	_, err := Encrypt(data, shortKey)
-// 	assert.Error(t, err, "Encryption should fail with a short key")
-// }
+func TestEncryptionFailure(t *testing.T) {
+	// Test data
+	invalidData := ""
 
-// func TestDecryptError(t *testing.T) {
-// 	key := "thiskeyis32byteslongandusedhere!"
-// 	invalidEncryptedData := "not really encrypted data"
+	// Encrypt invalid data
+	_, err := EncryptWithKMS(invalidData)
+	assert.Error(t, err, "EncryptWithKMS should return an error for invalid data")
+	assert.Contains(t, err.Error(), "failed to encrypt data", "Error message should contain expected message")
+}
 
-// 	// Test decryption with invalid data
-// 	_, err := Decrypt(invalidEncryptedData, key)
-// 	assert.Error(t, err, "Decryption should fail with invalid data")
-// }
+func TestDecryptionFailure(t *testing.T) {
+	// Test data
+	invalidEncryptedData := "invalid encrypted data"
 
+	// Decrypt invalid encrypted data
+	_, err := DecryptWithKMS(invalidEncryptedData)
+	assert.Error(t, err, "DecryptWithKMS should return an error for invalid encrypted data")
+}

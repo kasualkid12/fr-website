@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/kasualkid12/fr-website/server/modules/encryption"
+	// "github.com/kasualkid12/fr-website/server/modules/encryption"
 	grabenv "github.com/kasualkid12/fr-website/server/modules/grabEnv"
+	"github.com/kasualkid12/fr-website/server/modules/person"
 	_ "github.com/lib/pq"
 )
 
@@ -28,18 +29,31 @@ func main() {
 	}
 	fmt.Println("Successfully connected!")
 
-	originalText := "Hello, world!"
-
-	encryptedText, err := encryption.EncryptWithKMS(originalText)
+	rows, err := person.GetPersons(db)
 	if err != nil {
-		log.Fatal("Encryption error:", err)
+		log.Fatalf("Error getting persons: %s", err)
 	}
-	fmt.Println("Encrypted:", encryptedText)
 
-	decryptedText, err := encryption.DecryptWithKMS(encryptedText)
-	if err != nil {
-		log.Fatal("Decryption error:", err)
+	if !rows.Next() {
+		fmt.Println("No rows returned from the query.")
+	} else {
+		for {
+			var new_person person.Person
+			var personID int
+			if err := rows.Scan(&personID, &new_person.Name, &new_person.BirthDate, &new_person.DeathDate, &new_person.Gender, &new_person.PhotoURL, &new_person.ProfileID); err != nil {
+				log.Fatal(err)
+			}
+			fmt.Printf("Person ID: %d, Name: %s, Birth Date: %s, Death Date %s, Gender: %s, Photo URL: %s, Profile ID: %d\n", personID, new_person.Name, new_person.BirthDate, new_person.DeathDate, new_person.Gender, new_person.PhotoURL, new_person.ProfileID)
+
+			// Check if there are more rows; if not, break the loop
+			if !rows.Next() {
+				break
+			}
+		}
 	}
-	fmt.Println("Decrypted:", decryptedText)
 
+	// Check for errors from iterating over rows
+	if err = rows.Err(); err != nil {
+		log.Fatal(err)
+	}
 }

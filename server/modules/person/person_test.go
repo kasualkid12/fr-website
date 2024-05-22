@@ -85,21 +85,30 @@ func TestGetPersons(t *testing.T) {
 	assert.NoError(t, err)
 	defer db.Close()
 
-	columns := []string{"person_id", "name"}
+	columns := []string{"person_id", "name", "birth_date", "death_date", "gender", "photo_url", "profile_id"}
 	mock.ExpectQuery("WITH RECURSIVE descendents").
-		WillReturnRows(sqlmock.NewRows(columns).AddRow(1, "John Doe"))
+		WillReturnRows(sqlmock.NewRows(columns).
+			AddRow(1, "John Doe", "2000-01-01", "2070-01-01", "Male", "http://example.com/photo.jpg", 101))
 
-	rows, err := GetPersons(db)
+	persons, err := GetPersons(db)
 	assert.NoError(t, err)
+	assert.Len(t, persons, 1)
 
-	var personID int
-	var name string
-	for rows.Next() {
-		err := rows.Scan(&personID, &name)
-		assert.NoError(t, err)
-		assert.Equal(t, 1, personID)
-		assert.Equal(t, "John Doe", name)
+	deathDate := "2070-01-01"
+	photoURL := "http://example.com/photo.jpg"
+	profileID := 101
+
+	expectedPerson := Person{
+		ID:        1,
+		Name:      "John Doe",
+		BirthDate: "2000-01-01",
+		DeathDate: &deathDate,
+		Gender:    "Male",
+		PhotoURL:  &photoURL,
+		ProfileID: &profileID,
 	}
+
+	assert.Equal(t, expectedPerson, persons[0])
 
 	// Ensure all expectations were met
 	assert.NoError(t, mock.ExpectationsWereMet())

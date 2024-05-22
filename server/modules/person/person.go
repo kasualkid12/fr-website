@@ -10,12 +10,13 @@ import (
 
 // Person struct to hold personal data
 type Person struct {
-	Name      string
-	BirthDate string  // in "YYYY-MM-DD" format
-	DeathDate *string // can be nil if person is alive
-	Gender    string
-	PhotoURL  *string // can be nil if no photo URL is provided
-	ProfileID *int    // can be nil if no profile is linked
+	ID        int     `json:"id"`
+	Name      string  `json:"name"`
+	BirthDate string  `json:"birthDate"` // in "YYYY-MM-DD" format
+	DeathDate *string `json:"deathDate"` // can be nil if person is alive
+	Gender    string  `json:"gender"`
+	PhotoURL  *string `json:"photoUrl"`  // can be nil if no photo URL is provided
+	ProfileID *int    `json:"profileId"` // can be nil if no profile is linked
 }
 
 // AddPerson inserts a new person into the database
@@ -48,7 +49,7 @@ func DeletePerson(db *sql.DB, personID int) error {
 	return nil
 }
 
-func GetPersons(db *sql.DB) (*sql.Rows, error) {
+func GetPersons(db *sql.DB) ([]Person, error) {
 	query := `
 	WITH RECURSIVE descendents AS (
     SELECT DISTINCT person_id, name, birth_date, death_date, gender, photo_url, profile_id
@@ -73,19 +74,16 @@ SELECT * FROM descendents;
 	}
 	defer rows.Close()
 
-	// Optionally check if rows are present right here
-	if !rows.Next() {
-		log.Println("No rows returned.")
-		return nil, nil // or return an appropriate error
-	} else {
-		// Rewind cursor to start if you need to return *sql.Rows
-		rows.Close()
-		rows, err = db.Query(query) // re-execute query for returning
+	var persons []Person
+	for rows.Next() {
+		var person Person
+		err := rows.Scan(&person.ID, &person.Name, &person.BirthDate, &person.DeathDate, &person.Gender, &person.PhotoURL, &person.ProfileID)
 		if err != nil {
-			log.Printf("Error re-executing query: %v", err)
-			return nil, fmt.Errorf("GetPersons rows error on re-execution: %v", err)
+			log.Printf("Error scanning row: %v", err)
+			return nil, fmt.Errorf("GetPersons scan error: %v", err)
 		}
+		persons = append(persons, person)
 	}
 
-	return rows, nil
+	return persons, nil
 }

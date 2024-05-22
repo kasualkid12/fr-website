@@ -2,21 +2,66 @@ package person
 
 import (
 	"database/sql"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
+	"time"
 
 	_ "github.com/lib/pq"
 )
 
 // Person struct to hold personal data
 type Person struct {
-	ID        int     `json:"id"`
-	Name      string  `json:"name"`
-	BirthDate string  `json:"birthDate"` // in "YYYY-MM-DD" format
-	DeathDate *string `json:"deathDate"` // can be nil if person is alive
-	Gender    string  `json:"gender"`
-	PhotoURL  *string `json:"photoUrl"`  // can be nil if no photo URL is provided
-	ProfileID *int    `json:"profileId"` // can be nil if no profile is linked
+	ID        int         `json:"id"`
+	Name      string      `json:"name"`
+	BirthDate CustomDate  `json:"birthDate"`           // in "YYYY-MM-DD" format
+	DeathDate *CustomDate `json:"deathDate,omitempty"` // can be nil if person is alive
+	Gender    string      `json:"gender"`
+	PhotoURL  *string     `json:"photoUrl,omitempty"`  // can be nil if no photo URL is provided
+	ProfileID *int        `json:"profileId,omitempty"` // can be nil if no profile is linked
+}
+
+type CustomDate struct {
+	time.Time
+}
+
+func (cd *CustomDate) UnmarshalJSON(data []byte) error {
+	var err error
+	cd.Time, err = time.Parse(`"2006-01-02"`, string(data))
+	return err
+}
+
+func (cd CustomDate) MarshalJSON() ([]byte, error) {
+	return json.Marshal(cd.Format("2006-01-02"))
+}
+
+func (cd *CustomDate) Scan(value interface{}) error {
+	if value == nil {
+		*cd = CustomDate{Time: time.Time{}}
+		return nil
+	}
+	switch v := value.(type) {
+	case time.Time:
+		*cd = CustomDate{Time: v}
+		return nil
+	case []byte:
+		t, err := time.Parse("2006-01-02", string(v))
+		if err != nil {
+			return err
+		}
+		*cd = CustomDate{Time: t}
+		return nil
+	case string:
+		t, err := time.Parse("2006-01-02", v)
+		if err != nil {
+			return err
+		}
+		*cd = CustomDate{Time: t}
+		return nil
+	default:
+		return errors.New("unsupported scan type for CustomDate")
+	}
 }
 
 // AddPerson inserts a new person into the database
@@ -77,12 +122,29 @@ SELECT * FROM descendents;
 	var persons []Person
 	for rows.Next() {
 		var person Person
-		err := rows.Scan(&person.ID, &person.Name, &person.BirthDate, &person.DeathDate, &person.Gender, &person.PhotoURL, &person.ProfileID)
+		var birthDate CustomDate
+		// var deathDate CustomDate
+		var deathDateValid sql.NullTime
+
+		err := rows.Scan(&person.ID, &person.Name, &birthDate, &deathDateValid, &person.Gender, &person.PhotoURL, &person.ProfileID)
 		if err != nil {
 			log.Printf("Error scanning row: %v", err)
 			return nil, fmt.Errorf("GetPersons scan error: %v", err)
 		}
+
+		person.BirthDate = birthDate
+		if deathDateValid.Valid {
+			person.DeathDate = &CustomDate{Time: deathDateValid.Time}
+		} else {
+			person.DeathDate = nil
+		}
+
 		persons = append(persons, person)
+	}
+
+	if err := rows.Err(); err != nil {
+		log.Printf("Rows error: %v", err)
+		return nil, fmt.Errorf("GetPersons rows error: %v", err)
 	}
 
 	return persons, nil

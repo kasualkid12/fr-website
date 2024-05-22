@@ -6,11 +6,11 @@ import (
 	"log"
 	"net/http"
 
-	// "github.com/kasualkid12/fr-website/server/modules/encryption"
 	"github.com/gorilla/mux"
 	"github.com/kasualkid12/fr-website/server/handlers/personhandlers"
 	grabenv "github.com/kasualkid12/fr-website/server/modules/grabEnv"
 	_ "github.com/lib/pq"
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -32,11 +32,22 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("Successfully connected!")
-	
+
 	// Use the handler from the person package
 	router.HandleFunc("/persons", personhandlers.GetPersonsHandler(db)).Methods("GET")
-	
-	fmt.Println("Listening on port 3000...")
-	log.Fatal(http.ListenAndServe(":3000", router))
-	
+
+	// Configure CORS
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"}, // Adjust as needed
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
+	})
+
+	// Wrap the router with the CORS middleware
+	handler := c.Handler(router)
+
+	fmt.Println("Listening on port 8080...")
+	log.Fatal(http.ListenAndServe(":8080", handler))
+
 }

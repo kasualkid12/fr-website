@@ -2,6 +2,7 @@ package person
 
 import (
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
@@ -17,9 +18,11 @@ func TestAddPerson(t *testing.T) {
 		WithArgs("John Doe", "1990-01-01", nil, "male", nil, nil).
 		WillReturnResult(sqlmock.NewResult(1, 1)) // Mock the result: 1 row affected
 
+	birthDate := CustomDate{Time: time.Date(1990, 1, 1, 0, 0, 0, 0, time.UTC)}
+
 	p := Person{
 		Name:      "John Doe",
-		BirthDate: "1990-01-01",
+		BirthDate: birthDate,
 		DeathDate: nil,
 		Gender:    "male",
 		ProfileID: nil,
@@ -94,14 +97,15 @@ func TestGetPersons(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, persons, 1)
 
-	deathDate := "2070-01-01"
+	birthDate := CustomDate{Time: time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)}
+	deathDate := CustomDate{Time: time.Date(2070, 1, 1, 0, 0, 0, 0, time.UTC)}
 	photoURL := "http://example.com/photo.jpg"
 	profileID := 101
 
 	expectedPerson := Person{
 		ID:        1,
 		Name:      "John Doe",
-		BirthDate: "2000-01-01",
+		BirthDate: birthDate,
 		DeathDate: &deathDate,
 		Gender:    "Male",
 		PhotoURL:  &photoURL,

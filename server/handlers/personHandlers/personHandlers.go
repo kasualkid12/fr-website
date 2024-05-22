@@ -3,6 +3,7 @@ package personhandlers
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -11,6 +12,7 @@ import (
 
 func GetPersonsHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Print("Grabbing and sending Persons data\n")
 		persons, err := person.GetPersons(db)
 		if err != nil {
 			log.Printf("Error getting persons: %v", err)

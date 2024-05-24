@@ -1,10 +1,12 @@
 package person
 
 import (
+	"database/sql"
 	"testing"
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/kasualkid12/fr-website/server/modules/customdate"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,7 +20,7 @@ func TestAddPerson(t *testing.T) {
 		WithArgs("John Doe", "1990-01-01", nil, "male", nil, nil).
 		WillReturnResult(sqlmock.NewResult(1, 1)) // Mock the result: 1 row affected
 
-	birthDate := CustomDate{Time: time.Date(1990, 1, 1, 0, 0, 0, 0, time.UTC)}
+	birthDate := customdate.CustomDate{Time: time.Date(1990, 1, 1, 0, 0, 0, 0, time.UTC)}
 
 	p := Person{
 		Name:      "John Doe",
@@ -88,28 +90,31 @@ func TestGetPersons(t *testing.T) {
 	assert.NoError(t, err)
 	defer db.Close()
 
-	columns := []string{"person_id", "name", "birth_date", "death_date", "gender", "photo_url", "profile_id"}
-	mock.ExpectQuery("WITH RECURSIVE descendents").
+	columns := []string{"person_id", "name", "birth_date", "death_date", "gender", "photo_url", "profile_id", "relationship", "parent_object"}
+	mock.ExpectQuery("SELECT \\* FROM TREE_CHILD_SPOUSE_VW WHERE parent_object =").
+		WithArgs(1).
 		WillReturnRows(sqlmock.NewRows(columns).
-			AddRow(1, "John Doe", "2000-01-01", "2070-01-01", "Male", "http://example.com/photo.jpg", 101))
+			AddRow(1, "John Doe", "2000-01-01", sql.NullTime{Valid: true, Time: time.Date(2070, 1, 1, 0, 0, 0, 0, time.UTC)}, "Male", "http://example.com/photo.jpg", 101, "son", 0))
 
-	persons, err := GetPersons(db)
+	persons, err := GetPersons(db, 1)
 	assert.NoError(t, err)
 	assert.Len(t, persons, 1)
 
-	birthDate := CustomDate{Time: time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)}
-	deathDate := CustomDate{Time: time.Date(2070, 1, 1, 0, 0, 0, 0, time.UTC)}
+	birthDate := customdate.CustomDate{Time: time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)}
+	deathDate := customdate.CustomDate{Time: time.Date(2070, 1, 1, 0, 0, 0, 0, time.UTC)}
 	photoURL := "http://example.com/photo.jpg"
 	profileID := 101
 
 	expectedPerson := Person{
-		ID:        1,
-		Name:      "John Doe",
-		BirthDate: birthDate,
-		DeathDate: &deathDate,
-		Gender:    "Male",
-		PhotoURL:  &photoURL,
-		ProfileID: &profileID,
+		ID:           1,
+		Name:         "John Doe",
+		BirthDate:    birthDate,
+		DeathDate:    &deathDate,
+		Gender:       "Male",
+		PhotoURL:     &photoURL,
+		ProfileID:    &profileID,
+		Relationship: "son",
+		ParentObject: 0,
 	}
 
 	assert.Equal(t, expectedPerson, persons[0])

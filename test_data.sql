@@ -9,7 +9,7 @@ INSERT INTO
     photo_url
   )
 VALUES
-  ( 
+  (
     'Ric Boyd', -- #1
     '1946-10-06',
     NULL,
@@ -218,7 +218,7 @@ VALUES
     NULL
   ),
   (
-    'Steven White', -- #27
+    'Stephen White', -- #27
     '1998-03-15',
     NULL,
     'Male',
@@ -291,7 +291,7 @@ VALUES
   ),
   (
     'Levi Pawlicki', -- #36
-    '2021-09-30', 
+    '2021-09-30',
     NULL,
     'Male',
     NULL,
@@ -336,14 +336,14 @@ VALUES
   (7, 12, 'Parent'),
   (7, 13, 'Parent'),
   (7, 14, 'Parent'),
-  (4, 8, 'Spouse');
+  (4, 8, 'Spouse'),
   (4, 15, 'Parent'),
   (4, 16, 'Parent'),
   (4, 17, 'Parent'),
   (8, 15, 'Parent'),
   (8, 16, 'Parent'),
   (8, 17, 'Parent'),
-  (5, 9, 'Spouse');
+  (5, 9, 'Spouse'),
   (5, 18, 'Parent'),
   (5, 19, 'Parent'),
   (5, 20, 'Parent'),
@@ -352,13 +352,13 @@ VALUES
   (9, 19, 'Parent'),
   (9, 20, 'Parent'),
   (9, 21, 'Parent'),
-  (6, 10, 'Spouse');
+  (6, 10, 'Spouse'),
   (6, 22, 'Parent'),
   (6, 23, 'Parent'),
   (10, 22, 'Parent'),
   (10, 23, 'Parent'),
-  (11, 24, 'Spouse');
-  (12, 25, 'Spouse');
+  (11, 24, 'Spouse'),
+  (12, 25, 'Spouse'),
   (12, 28, 'Parent'),
   (12, 29, 'Parent'),
   (12, 30, 'Parent'),
@@ -371,7 +371,7 @@ VALUES
   (25, 31, 'Parent'),
   (25, 32, 'Parent'),
   (25, 33, 'Parent'),
-  (15, 26, 'Spouse');
+  (15, 26, 'Spouse'),
   (15, 34, 'Parent'),
   (15, 35, 'Parent'),
   (15, 36, 'Parent'),
@@ -380,5 +380,5 @@ VALUES
   (26, 35, 'Parent'),
   (26, 36, 'Parent'),
   (26, 37, 'Parent'),
-  (16, 27, 'Spouse');
-  (18, 38, 'Parent'),
+  (16, 27, 'Spouse'),
+  (18, 38, 'Parent');

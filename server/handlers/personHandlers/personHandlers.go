@@ -12,8 +12,7 @@ import (
 
 func GetPersonsHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Print("Grabbing and sending Persons data\n")
-		persons, err := person.GetPersons(db)
+		persons, err := person.GetPersons(db, 3)
 		if err != nil {
 			log.Printf("Error getting persons: %v", err)
 			http.Error(w, "Error getting persons", http.StatusInternalServerError)

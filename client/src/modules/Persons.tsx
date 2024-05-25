@@ -3,11 +3,12 @@ import { Person } from '../interfaces/Person';
 
 interface PersonsComponentProps {
   person: Person;
+  onClick: () => void;
 }
 
-function PersonsComponent({ person }: PersonsComponentProps) {
+function PersonsComponent({ person, onClick }: PersonsComponentProps) {
   return (
-    <div>
+    <div onClick={onClick}>
       <div key={person.id}>
         <h1>{person.name}</h1>
         <p>Birth Date: {person.birthDate}</p>

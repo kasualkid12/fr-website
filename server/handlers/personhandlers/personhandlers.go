@@ -9,9 +9,20 @@ import (
 	"github.com/kasualkid12/fr-website/server/modules/person"
 )
 
+type requestBody struct {
+	ID int `json:"id"`
+}
+
 func GetPersonsHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		persons, err := person.GetPersons(db, 3)
+		var reqBody requestBody
+		err := json.NewDecoder(r.Body).Decode(&reqBody)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		persons, err := person.GetPersons(db, reqBody.ID)
 		if err != nil {
 			log.Printf("Error getting persons: %v", err)
 			http.Error(w, "Error getting persons", http.StatusInternalServerError)

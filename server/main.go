@@ -34,13 +34,13 @@ func main() {
 	fmt.Println("Successfully connected!")
 
 	// Use the handler from the person package
-	router.HandleFunc("/persons", personhandlers.GetPersonsHandler(db)).Methods("GET")
+	router.HandleFunc("/persons", personhandlers.GetPersonsHandler(db)).Methods("POST")
 
 	// Configure CORS
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:3000"}, // Adjust as needed
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
-		AllowedHeaders:   []string{"Content-Type", "Authorization"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization", "body"},
 		AllowCredentials: true,
 	})
 

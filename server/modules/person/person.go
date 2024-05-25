@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/kasualkid12/fr-website/server/modules/customdate"
 	_ "github.com/lib/pq"
@@ -97,5 +98,45 @@ func GetPersons(db *sql.DB, personID int) ([]Person, error) {
 		return nil, fmt.Errorf("GetPersons rows error: %v", err)
 	}
 
+	// Rearrange persons to move spouses above their respective persons
+	persons = RearrangePersons(persons)
+
 	return persons, nil
+}
+
+func RearrangePersons(persons []Person) []Person {
+	personMap := make(map[string]int)
+	for i, person := range persons {
+		personMap[person.Name] = i
+	}
+
+	rearrange := make([]Person, 0, len(persons))
+	rearranged := make([]Person, 0, len(persons))
+	spouses := make(map[int]Person)
+
+	for i, person := range persons {
+		if strings.Contains(person.Relationship, "Spouse") {
+			parentName := strings.TrimSuffix(person.Relationship, " Spouse")
+			if index, exists := personMap[parentName]; exists {
+				if i-1 == index {
+					// Spouse is already in the correct spot
+					rearrange = append(rearrange, person)
+					continue
+				}
+				spouses[index] = person
+			}
+		} else {
+			rearrange = append(rearrange, person)
+		}
+	}
+
+	// Insert spouses above their respective persons
+	for i := 0; i < len(rearrange); i++ {
+		rearranged = append(rearranged, rearrange[i])
+		if spouse, exists := spouses[i]; exists {
+			rearranged = append(rearranged, spouse)
+		}
+	}
+
+	return rearranged
 }

@@ -8,3 +8,7 @@ export interface Person {
   profileId: number | null;
   relationship: string;
 }
+
+export interface PersonWithSpouse extends Person {
+  spouse?: Person;
+}

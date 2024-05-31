@@ -3,22 +3,33 @@ import { Person } from '../interfaces/Person';
 
 interface PersonsComponentProps {
   person: Person;
+  spouse?: Person;
   onClick: () => void;
 }
 
-function PersonsComponent({ person, onClick }: PersonsComponentProps) {
+function PersonsComponent({ person, spouse, onClick }: PersonsComponentProps) {
   return (
-    <div onClick={onClick}>
-      <div key={person.id}>
-        <h1>{person.name}</h1>
-        <p>Birth Date: {person.birthDate}</p>
-        <p>Death Date: {person.deathDate}</p>
-        <p>Gender: {person.gender}</p>
-        <p>Profile ID: {person.profileId}</p>
-        <p>Relationship: {person.relationship}</p>
+    <div className="bubble" onClick={onClick} id={`person-${person.id}`}>
+      <div className="bubble-content">
         {person.photoUrl && (
           <img src={person.photoUrl} alt={`${person.name}`} />
         )}
+        {spouse && spouse.photoUrl && (
+          <img src={spouse.photoUrl} alt={`${spouse.name}`} />
+        )}
+        <div className="overlay">
+          <p>
+            {person.name} {spouse ? `& ${spouse.name}` : ''}
+          </p>
+          <p>
+            {person.birthDate} - {person.deathDate}
+          </p>
+          {spouse && (
+            <p>
+              {spouse.birthDate} - {spouse.deathDate}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

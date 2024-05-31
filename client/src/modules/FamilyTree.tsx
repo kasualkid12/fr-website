@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import '../styles/FamilyTree.scss';
 import PersonsComponent from './Persons';
 import { Person, PersonWithSpouse } from '../interfaces/Person';
@@ -6,6 +6,7 @@ import { Person, PersonWithSpouse } from '../interfaces/Person';
 function FamilyTree() {
   const [persons, setPersons] = useState<Person[]>([]);
   const [selectedPersonId, setSelectedPersonId] = useState<number>(1);
+  const svgRef = useRef<SVGSVGElement>(null);
 
   const fetchPersons = (id: number) => {
     fetch(`http://localhost:8080/persons`, {
@@ -28,6 +29,10 @@ function FamilyTree() {
   useEffect(() => {
     fetchPersons(selectedPersonId);
   }, [selectedPersonId]);
+
+  useEffect(() => {
+    renderLines();
+  }, [persons]);
 
   const handlePersonClick = (id: number) => {
     setSelectedPersonId(id);
@@ -93,9 +98,13 @@ function FamilyTree() {
   };
 
   const renderLines = () => {
-    const lines: JSX.Element[] = [];
+    const svgElement = svgRef.current;
+    if (!svgElement) return;
+
+    const svgNS = 'http://www.w3.org/2000/svg'; // SVG namespace
+    svgElement.innerHTML = ''; // Clear existing lines
     const parentElement = document.getElementById(`person-${selectedPersonId}`);
-    if (!parentElement) return null;
+    if (!parentElement) return;
 
     const parentRect = parentElement.getBoundingClientRect();
 
@@ -107,26 +116,35 @@ function FamilyTree() {
       if (!childElement) return;
       const childRect = childElement.getBoundingClientRect();
 
-      lines.push(
-        <line
-          key={index}
-          x1={parentRect.left + parentRect.width / 2}
-          y1={parentRect.top + parentRect.height / 2}
-          x2={childRect.left + childRect.width / 2}
-          y2={childRect.top + childRect.height / 2}
-          stroke="black"
-          strokeWidth="2"
-        />
+      const line = document.createElementNS(svgNS, 'line');
+      line.setAttribute(
+        'x1',
+        (parentRect.left + parentRect.width / 2).toString()
       );
+      line.setAttribute(
+        'y1',
+        (parentRect.top + window.scrollY + parentRect.height / 2).toString()
+      );
+      line.setAttribute(
+        'x2',
+        (childRect.left + childRect.width / 2).toString()
+      );
+      line.setAttribute(
+        'y2',
+        (childRect.top + window.scrollY + childRect.height / 2).toString()
+      );
+      line.setAttribute('stroke', 'black');
+      line.setAttribute('stroke-width', '2');
+      svgElement.appendChild(line);
     });
-
-    return lines;
   };
 
   return (
     <div className="FamilyTree">
       {createPersonBubbles(persons)}
-      <svg className="lines">{renderLines()}</svg>
+      <svg className="lines" ref={svgRef}>
+        {/* Lines will be appended here */}
+      </svg>
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { Person, PersonWithSpouse } from '../interfaces/Person';
 function FamilyTree() {
   const [persons, setPersons] = useState<Person[]>([]);
   const [selectedPersonId, setSelectedPersonId] = useState<number>(1);
+  const [history, setHistory] = useState<number[]>([]);
   const svgRef = useRef<SVGSVGElement>(null);
 
   const fetchPersons = (id: number) => {
@@ -35,7 +36,24 @@ function FamilyTree() {
   }, [persons]);
 
   const handlePersonClick = (id: number) => {
+    setHistory((prevHistory) => [...prevHistory, selectedPersonId]);
     setSelectedPersonId(id);
+  };
+
+  const handleGoBack = () => {
+    setHistory((prevHistory) => {
+      const newHistory = [...prevHistory];
+      const previousId = newHistory.pop();
+      if (previousId !== undefined) {
+        setSelectedPersonId(previousId);
+      }
+      return newHistory;
+    });
+  };
+
+  const handleGoToTop = () => {
+    setHistory([]);
+    setSelectedPersonId(1);
   };
 
   const createPersonBubbles = (persons: Person[]) => {
@@ -141,6 +159,14 @@ function FamilyTree() {
 
   return (
     <div className="FamilyTree">
+      <button className="go-to-top" onClick={handleGoToTop}>
+        Go to Top
+      </button>
+      {history.length > 0 && (
+        <button className="go-back" onClick={handleGoBack}>
+          ↑
+        </button>
+      )}
       {createPersonBubbles(persons)}
       <svg className="lines" ref={svgRef}>
         {/* Lines will be appended here */}

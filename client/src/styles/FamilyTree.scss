@@ -106,3 +106,32 @@
   pointer-events: none;
   z-index: -1;
 }
+
+.go-back {
+  position: absolute;
+  top: 5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ccc;
+  border: none;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.go-to-top {
+  position: absolute;
+  top: 4rem;
+  right: 1rem;
+  background-color: #ccc;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+}

@@ -95,6 +95,7 @@ function FamilyTree() {
             person={sourcePerson}
             spouse={sourcePerson.spouse}
             onClick={() => handlePersonClick(sourcePerson!.id)}
+            isSelf={true}
           />
         </div>
       );
@@ -105,6 +106,7 @@ function FamilyTree() {
             person={child}
             spouse={child.spouse}
             onClick={() => handlePersonClick(child.id)}
+            isSelf={false}
           />
         </div>
       ));
@@ -151,7 +153,7 @@ function FamilyTree() {
         'y2',
         (childRect.top + window.scrollY + childRect.height / 2).toString()
       );
-      line.setAttribute('stroke', 'black');
+      line.setAttribute('stroke', '#faf9f6');
       line.setAttribute('stroke-width', '2');
       svgElement.appendChild(line);
     });

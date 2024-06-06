@@ -1,6 +1,7 @@
 export interface Person {
   id: number;
-  name: string;
+  firstName: string;
+  lastName: string;
   birthDate: string;
   deathDate: string | null;
   gender: string;

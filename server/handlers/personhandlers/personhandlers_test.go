@@ -42,7 +42,8 @@ func TestGetPersonsHandler(t *testing.T) {
 	expectedPersons := []person.Person{
 		{
 			ID:           1,
-			Name:         "John Doe",
+			FirstName:    "John",
+			LastName:     "Doe",
 			BirthDate:    customdate.CustomDate{Time: time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)},
 			DeathDate:    &customdate.CustomDate{Time: time.Date(2070, 1, 1, 0, 0, 0, 0, time.UTC)},
 			Gender:       "Male",

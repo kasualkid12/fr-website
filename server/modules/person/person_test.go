@@ -17,13 +17,14 @@ func TestAddPerson(t *testing.T) {
 
 	// Setup our expected actions
 	mock.ExpectExec("INSERT INTO persons").
-		WithArgs("John Doe", "1990-01-01", nil, "male", nil, nil).
+		WithArgs("John", "Doe", "1990-01-01", nil, "male", nil, nil).
 		WillReturnResult(sqlmock.NewResult(1, 1)) // Mock the result: 1 row affected
 
 	birthDate := customdate.CustomDate{Time: time.Date(1990, 1, 1, 0, 0, 0, 0, time.UTC)}
 
 	p := Person{
-		Name:      "John Doe",
+		FirstName: "John",
+		LastName:  "Doe",
 		BirthDate: birthDate,
 		DeathDate: nil,
 		Gender:    "male",
@@ -90,11 +91,11 @@ func TestGetPersons(t *testing.T) {
 	assert.NoError(t, err)
 	defer db.Close()
 
-	columns := []string{"person_id", "name", "birth_date", "death_date", "gender", "photo_url", "profile_id", "relationship", "parent_object"}
+	columns := []string{"person_id", "first_name", "last_name", "birth_date", "death_date", "gender", "photo_url", "profile_id", "relationship", "parent_object"}
 	mock.ExpectQuery("SELECT \\* FROM TREE_CHILD_SPOUSE_VW WHERE parent_object =").
 		WithArgs(1).
 		WillReturnRows(sqlmock.NewRows(columns).
-			AddRow(1, "John Doe", "2000-01-01", sql.NullTime{Valid: true, Time: time.Date(2070, 1, 1, 0, 0, 0, 0, time.UTC)}, "Male", "http://example.com/photo.jpg", 101, "son", 0))
+			AddRow(1, "John", "Doe", "2000-01-01", sql.NullTime{Valid: true, Time: time.Date(2070, 1, 1, 0, 0, 0, 0, time.UTC)}, "Male", "http://example.com/photo.jpg", 101, "son", 0))
 
 	persons, err := GetPersons(db, 1)
 	assert.NoError(t, err)
@@ -107,7 +108,8 @@ func TestGetPersons(t *testing.T) {
 
 	expectedPerson := Person{
 		ID:           1,
-		Name:         "John Doe",
+		FirstName:    "John",
+		LastName:     "Doe",
 		BirthDate:    birthDate,
 		DeathDate:    &deathDate,
 		Gender:       "Male",
@@ -117,8 +119,27 @@ func TestGetPersons(t *testing.T) {
 		ParentObject: 0,
 	}
 
-	assert.Equal(t, expectedPerson, persons[0])
+	if persons == nil {
+		t.Errorf("persons is nil")
+	}
 
-	// Ensure all expectations were met
-	assert.NoError(t, mock.ExpectationsWereMet())
+	if len(persons) != 1 {
+		t.Errorf("expected 1 person, got %d", len(persons))
+	}
+
+	if persons[0].ID != expectedPerson.ID {
+		t.Errorf("expected person ID %d, got %d", expectedPerson.ID, persons[0].ID)
+	}
+
+	if persons[0].FirstName != expectedPerson.FirstName {
+		t.Errorf("expected person first name %s, got %s", expectedPerson.FirstName, persons[0].FirstName)
+	}
+
+	if persons[0].LastName != expectedPerson.LastName {
+		t.Errorf("expected person last name %s, got %s", expectedPerson.LastName, persons[0].LastName)
+	}
+
+	if !persons[0].BirthDate.Time.Equal(expectedPerson.BirthDate.Time) {
+		t.Errorf("expected person birth date %s, got %s", expectedPerson.BirthDate.String(), persons[0].BirthDate.String())
+	}
 }

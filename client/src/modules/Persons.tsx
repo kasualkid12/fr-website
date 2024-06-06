@@ -6,30 +6,46 @@ interface PersonsComponentProps {
   person: Person;
   spouse?: Person;
   onClick: () => void;
+  isSelf?: boolean;
 }
 
-function PersonsComponent({ person, spouse, onClick }: PersonsComponentProps) {
+function PersonsComponent({
+  person,
+  spouse,
+  onClick,
+  isSelf,
+}: PersonsComponentProps) {
   return (
-    <div className="bubble" onClick={onClick} id={`person-${person.id}`}>
+    <div
+      className={`bubble ${isSelf ? 'self-bubble' : 'child-bubble'}`}
+      onClick={onClick}
+      id={`person-${person.id}`}
+    >
       <div className="bubble-content">
         <div className="images-container">
-          <img src={person.photoUrl || defaultImage} alt={`${person.name}`} />
+          <img src={person.photoUrl || defaultImage} alt={`${person.firstName} ${person.lastName}`} />
           {spouse && (
-            <img src={spouse.photoUrl || defaultImage} alt={`${spouse.name}`} />
+            <img src={spouse.photoUrl || defaultImage} alt={`${spouse.firstName} ${spouse.lastName}`} />
           )}
         </div>
         <div className="overlay">
           <p>
-            {person.name} {spouse ? `& ${spouse.name}` : ''}
+            {person.firstName} {spouse ? `& ${spouse.firstName}` : ''} {person.lastName}
           </p>
           <p>
-            {person.birthDate} - {person.deathDate}
+            {isSelf
+              ? `${person.birthDate}${
+                  person.deathDate ? ` - ${person.deathDate}` : ''
+                }`
+              : ''}
           </p>
-          {spouse && (
-            <p>
-              {spouse.birthDate} - {spouse.deathDate}
-            </p>
-          )}
+          <p>
+            {isSelf && spouse
+              ? `${spouse.birthDate}${
+                  spouse.deathDate ? ` - ${spouse.deathDate}` : ''
+                }`
+              : ''}
+          </p>
         </div>
       </div>
     </div>

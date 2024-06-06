@@ -13,7 +13,8 @@ import (
 // Person struct to hold personal data
 type Person struct {
 	ID           int                    `json:"id"`
-	Name         string                 `json:"name"`
+	FirstName    string                 `json:"firstName"`
+	LastName     string                 `json:"lastName"`
 	BirthDate    customdate.CustomDate  `json:"birthDate"`           // in "YYYY-MM-DD" format
 	DeathDate    *customdate.CustomDate `json:"deathDate,omitempty"` // can be nil if person is alive
 	Gender       string                 `json:"gender"`
@@ -32,7 +33,7 @@ func AddPerson(db *sql.DB, p Person) error {
 		d := p.DeathDate.Time.Format("2006-01-02")
 		deathDate = &d
 	}
-	_, err := db.Exec(query, p.Name, birthDate, deathDate, p.Gender, p.ProfileID, p.PhotoURL)
+	_, err := db.Exec(query, p.FirstName, p.LastName, birthDate, deathDate, p.Gender, p.ProfileID, p.PhotoURL)
 	if err != nil {
 		return fmt.Errorf("AddPersons insert error: %v", err)
 	}
@@ -77,7 +78,7 @@ func GetPersons(db *sql.DB, personID int) ([]Person, error) {
 		var birthDate customdate.CustomDate
 		var deathDateValid sql.NullTime
 
-		err := rows.Scan(&person.ID, &person.Name, &birthDate, &deathDateValid, &person.Gender, &person.PhotoURL, &person.ProfileID, &person.Relationship, &person.ParentObject)
+		err := rows.Scan(&person.ID, &person.FirstName, &person.LastName, &birthDate, &deathDateValid, &person.Gender, &person.PhotoURL, &person.ProfileID, &person.Relationship, &person.ParentObject)
 		if err != nil {
 			log.Printf("Error scanning row: %v", err)
 			return nil, fmt.Errorf("GetPersons scan error: %v", err)
@@ -107,7 +108,7 @@ func GetPersons(db *sql.DB, personID int) ([]Person, error) {
 func RearrangePersons(persons []Person) []Person {
 	personMap := make(map[string]int)
 	for i, person := range persons {
-		personMap[person.Name] = i
+		personMap[person.FirstName+" "+person.LastName] = i
 	}
 
 	rearrange := make([]Person, 0, len(persons))
@@ -140,3 +141,4 @@ func RearrangePersons(persons []Person) []Person {
 
 	return rearranged
 }
+

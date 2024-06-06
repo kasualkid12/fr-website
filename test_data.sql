@@ -1,7 +1,8 @@
 -- Insert entries into the 'persons' table
 INSERT INTO
   persons (
-    name,
+    first_name,
+    last_name,
     birth_date,
     death_date,
     gender,
@@ -10,7 +11,8 @@ INSERT INTO
   )
 VALUES
   (
-    'Ric Boyd', -- #1
+    'Ric', -- #1
+    'Boyd',
     '1946-10-06',
     NULL,
     'Male',
@@ -18,7 +20,8 @@ VALUES
     NULL
   ),
   (
-    'Dana Boyd', -- #2
+    'Dana', -- #2
+    'Boyd',
     '1949-07-16',
     NULL,
     'Female',
@@ -26,7 +29,8 @@ VALUES
     NULL
   ),
   (
-    'Dava Walker', -- #3
+    'Dava', -- #3
+    'Walker',
     '1968-09-10',
     NULL,
     'Female',
@@ -34,7 +38,8 @@ VALUES
     NULL
   ),
   (
-    'Jami Garzella', -- #4
+    'Jami', -- #4
+    'Garzella',
     '1970-02-24',
     NULL,
     'Female',
@@ -42,7 +47,8 @@ VALUES
     NULL
   ),
   (
-    'Richard Boyd', -- #5
+    'Richard', -- #5
+    'Boyd',
     '1971-09-08',
     NULL,
     'Male',
@@ -50,7 +56,8 @@ VALUES
     NULL
   ),
   (
-    'Matthew Boyd', -- #6
+    'Matthew', -- #6
+    'Boyd',
     '1977-06-05',
     NULL,
     'Male',
@@ -58,7 +65,8 @@ VALUES
     NULL
   ),
   (
-    'Paul Walker II', -- #7
+    'Paul', -- #7
+    'Walker',
     '1965-11-29',
     NULL,
     'Male',
@@ -66,7 +74,8 @@ VALUES
     NULL
   ),
   (
-    'Tom Garzella', -- #8
+    'Tom', -- #8
+    'Garzella',
     '1968-11-18',
     NULL,
     'Male',
@@ -74,7 +83,8 @@ VALUES
     NULL
   ),
   (
-    'Christy Boyd', -- #9
+    'Christy', -- #9
+    'Boyd',
     '1974-05-16',
     NULL,
     'Female',
@@ -82,7 +92,8 @@ VALUES
     NULL
   ),
   (
-    'Kelly Boyd', -- #10
+    'Kelly', -- #10
+    'Boyd',
     '1977-05-24',
     NULL,
     'Female',
@@ -90,7 +101,8 @@ VALUES
     NULL
   ),
   (
-    'Haleigh Forrest', -- #11
+    'Haleigh', -- #11
+    'Forrest',
     '1990-04-20',
     NULL,
     'Female',
@@ -98,7 +110,8 @@ VALUES
     NULL
   ),
   (
-    'Hana Guess', -- #12
+    'Hana', -- #12
+    'Guess',
     '1991-06-23',
     NULL,
     'Female',
@@ -106,7 +119,8 @@ VALUES
     NULL
   ),
   (
-    'Jon Walker', -- #13
+    'Jon', -- #13
+    'Walker',
     '1994-06-29',
     NULL,
     'Male',
@@ -114,7 +128,8 @@ VALUES
     NULL
   ),
   (
-    'Trey Walker', -- #14
+    'Trey', -- #14
+    'Walker',
     '1999-06-21',
     NULL,
     'Male',
@@ -122,7 +137,8 @@ VALUES
     NULL
   ),
   (
-    'Calli Pawlicki', -- #15
+    'Calli', -- #15
+    'Pawlicki',
     '1996-04-18',
     NULL,
     'Female',
@@ -130,7 +146,8 @@ VALUES
     NULL
   ),
   (
-    'Mikinna White', -- #16
+    'Mikinna', -- #16
+    'White',
     '1999-05-04',
     NULL,
     'Female',
@@ -138,7 +155,8 @@ VALUES
     NULL
   ),
   (
-    'Zackary Garzella', -- #17
+    'Zackary', -- #17
+    'Garzella',
     '2004-03-24',
     NULL,
     'Male',
@@ -146,7 +164,8 @@ VALUES
     NULL
   ),
   (
-    'Collin Boyd', -- #18
+    'Collin', -- #18
+    'Boyd',
     '2000-09-12',
     NULL,
     'Male',
@@ -154,7 +173,8 @@ VALUES
     NULL
   ),
   (
-    'Kamrin Boyd', -- #19
+    'Kamrin', -- #19
+    'Boyd',
     '2006-02-20',
     NULL,
     'Female',
@@ -162,7 +182,8 @@ VALUES
     NULL
   ),
   (
-    'Ozzie Boyd', -- #20
+    'Ozzie', -- #20
+    'Boyd',
     '2010-02-16',
     NULL,
     'Male',
@@ -170,7 +191,8 @@ VALUES
     NULL
   ),
   (
-    'Easton Boyd', -- #21
+    'Easton', -- #21
+    'Boyd',
     '2013-06-25',
     NULL,
     'Male',
@@ -178,7 +200,8 @@ VALUES
     NULL
   ),
   (
-    'Alexa Boyd', -- #22
+    'Alexa', -- #22
+    'Boyd',
     '2003-06-07',
     NULL,
     'Female',
@@ -186,7 +209,8 @@ VALUES
     NULL
   ),
   (
-    'Olivia Boyd', -- #23
+    'Olivia', -- #23
+    'Boyd',
     '2006-05-24',
     NULL,
     'Female',
@@ -194,7 +218,8 @@ VALUES
     NULL
   ),
   (
-    'John Forrest', -- #24
+    'John', -- #24
+    'Forrest',
     '1987-07-23',
     NULL,
     'Male',
@@ -202,7 +227,8 @@ VALUES
     NULL
   ),
   (
-    'Ian Guess', -- #25
+    'Ian', -- #25
+    'Guess',
     '1988-03-28',
     NULL,
     'Male',
@@ -210,7 +236,8 @@ VALUES
     NULL
   ),
   (
-    'Jacob Pawlicki', -- #26
+    'Jacob', -- #26
+    'Pawlicki',
     '1996-02-05',
     NULL,
     'Male',
@@ -218,7 +245,8 @@ VALUES
     NULL
   ),
   (
-    'Stephen White', -- #27
+    'Stephen', -- #27
+    'White',
     '1998-03-15',
     NULL,
     'Male',
@@ -226,7 +254,8 @@ VALUES
     NULL
   ),
   (
-    'Desmond Guess', -- #28
+    'Desmond', -- #28
+    'Guess',
     '2013-09-29',
     NULL,
     'Male',
@@ -234,7 +263,8 @@ VALUES
     NULL
   ),
   (
-    'Nona Guess', -- #29
+    'Nona', -- #29
+    'Guess',
     '2014-10-07',
     NULL,
     'Female',
@@ -242,7 +272,8 @@ VALUES
     NULL
   ),
   (
-    'Everett Guess', -- #30
+    'Everett', -- #30
+    'Guess',
     '2016-10-26',
     NULL,
     'Male',
@@ -250,7 +281,8 @@ VALUES
     NULL
   ),
   (
-    'Remington Guess', -- #31
+    'Remington', -- #31
+    'Guess',
     '2018-12-28',
     NULL,
     'Male',
@@ -258,7 +290,8 @@ VALUES
     NULL
   ),
   (
-    'Sage Guess', -- #32
+    'Sage', -- #32
+    'Guess',
     '2020-11-15',
     NULL,
     'Female',
@@ -266,7 +299,8 @@ VALUES
     NULL
   ),
   (
-    'Lewis Guess', -- #33
+    'Lewis', -- #33
+    'Guess',
     '2022-08-23',
     NULL,
     'Male',
@@ -274,7 +308,8 @@ VALUES
     NULL
   ),
   (
-    'Madison Pawlicki', -- #34
+    'Madison', -- #34
+    'Pawlicki',
     '2017-08-25',
     NULL,
     'Female',
@@ -282,7 +317,8 @@ VALUES
     NULL
   ),
   (
-    'Paisley Pawlicki', -- #35
+    'Paisley', -- #35
+    'Pawlicki',
     '2020-07-30',
     NULL,
     'Female',
@@ -290,7 +326,8 @@ VALUES
     NULL
   ),
   (
-    'Levi Pawlicki', -- #36
+    'Levi', -- #36
+    'Pawlicki',
     '2021-09-30',
     NULL,
     'Male',
@@ -298,7 +335,8 @@ VALUES
     NULL
   ),
   (
-    'Kinsley Pawlicki', -- #37
+    'Kinsley', -- #37
+    'Pawlicki',
     '2024-05-21',
     NULL,
     'Female',
@@ -306,7 +344,8 @@ VALUES
     NULL
   ),
   (
-    'James Kruger', -- #38
+    'James', -- #38
+    'Kruger',
     '2021-03-21',
     NULL,
     'Male',

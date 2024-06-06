@@ -1,9 +1,13 @@
 @import './fonts';
 @import './colors';
 
+body {
+  background: $darkmain;
+}
+
 .FamilyTree {
   padding-top: 15rem;
-  height: 100vh;
+  height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -16,6 +20,8 @@
   justify-content: center;
   margin-bottom: 2rem;
   position: relative;
+  width: 300px;
+  height: 300px;
 }
 
 .children {
@@ -27,26 +33,29 @@
 
 .child-bubble {
   position: relative;
+  width: 150px;
+  height: 150px;
 }
 
 .bubble {
   position: relative;
   margin: 1rem;
-  width: 200px;
-  height: 200px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   overflow: hidden;
   border: 2px solid #ccc;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #f9f9f9;
-  transition: transform 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .bubble:hover {
-  transform: scale(1.1);
+  transform: scale(1.3);
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
 }
 
 .bubble-content {
@@ -57,6 +66,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 }
 
 .images-container {
@@ -66,17 +76,39 @@
   align-items: center;
   width: 100%;
   height: 70%;
+  position: relative;
 }
 
-.images-container img {
+.self-bubble .images-container img {
   width: 50%;
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
 }
 
-.bubble img {
+.child-bubble .images-container {
+  transition: transform 0.2s;
+}
+
+.child-bubble .images-container img {
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  transition: width 0.2s;
+}
+
+.child-bubble:hover .images-container {
+  transform: translateX(-25%);
+}
+
+.child-bubble:hover .images-container img:first-child {
+  width: 50%;
+}
+
+.child-bubble:hover .images-container img:last-child {
+  display: block;
+  width: 50%;
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
@@ -91,10 +123,12 @@
   text-align: center;
   padding: 0.5rem;
   font-size: 0.8rem;
+  opacity: 0;
+  transition: opacity 0.2s;
 }
 
-.bubble .overlay p {
-  margin: 0;
+.bubble:hover .overlay {
+  opacity: 1;
 }
 
 .lines {

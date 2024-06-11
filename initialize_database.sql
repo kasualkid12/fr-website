@@ -1,3 +1,4 @@
+-- Create tables
 CREATE TABLE
   persons (
     person_id SERIAL PRIMARY KEY,
@@ -28,6 +29,7 @@ CREATE TABLE
     updated_at TIMESTAMP
   );
 
+-- Add foreign key constraints
 ALTER TABLE profiles ADD CONSTRAINT fk_profile_person FOREIGN KEY (person_id) REFERENCES persons (person_id) DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE persons ADD CONSTRAINT fk_person_profile FOREIGN KEY (profile_id) REFERENCES profiles (profile_id);
@@ -36,6 +38,7 @@ ALTER TABLE relationships ADD CONSTRAINT fk_relationship_person1 FOREIGN KEY (pe
 
 ALTER TABLE relationships ADD CONSTRAINT fk_relationship_person2 FOREIGN KEY (person2_id) REFERENCES persons (person_id);
 
+-- Create views
 CREATE OR REPLACE VIEW public.tree_initial_vw AS
 WITH RECURSIVE family_tree AS (
     SELECT p.person_id,
@@ -92,7 +95,6 @@ FROM family_tree;
 
 ALTER TABLE public.tree_initial_vw
     OWNER TO root;
-
 
 CREATE OR REPLACE VIEW public.tree_child_spouse_vw AS
 WITH RECURSIVE family_tree AS (

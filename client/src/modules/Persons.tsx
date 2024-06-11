@@ -23,26 +23,35 @@ function PersonsComponent({
     >
       <div className="bubble-content">
         <div className="images-container">
-          <img src={person.photoUrl || defaultImage} alt={`${person.firstName} ${person.lastName}`} />
+          <img
+            className="person-image"
+            src={person.photoUrl || defaultImage}
+            alt={`${person.firstName} ${person.lastName}`}
+          />
           {spouse && (
-            <img src={spouse.photoUrl || defaultImage} alt={`${spouse.firstName} ${spouse.lastName}`} />
+            <img
+              className="spouse-image"
+              src={spouse.photoUrl || defaultImage}
+              alt={`${spouse.firstName} ${spouse.lastName}`}
+            />
           )}
         </div>
         <div className="overlay">
           <p>
-            {person.firstName} {spouse ? `& ${spouse.firstName}` : ''} {person.lastName}
+            {person.firstName} {spouse ? `& ${spouse.firstName}` : ''}{' '}
+            {person.lastName}
           </p>
           <p>
             {isSelf
-              ? `${person.birthDate}${
-                  person.deathDate ? ` - ${person.deathDate}` : ''
+              ? `${person.birthDate} ${
+                  person.deathDate ? `- ${person.deathDate}` : ''
                 }`
               : ''}
           </p>
           <p>
             {isSelf && spouse
-              ? `${spouse.birthDate}${
-                  spouse.deathDate ? ` - ${spouse.deathDate}` : ''
+              ? `${spouse.birthDate} ${
+                  spouse.deathDate ? `- ${spouse.deathDate}` : ''
                 }`
               : ''}
           </p>

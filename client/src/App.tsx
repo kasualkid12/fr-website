@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './styles/App.scss';
-import NavBar from './modules/NavBar';
-import Home from './modules/Home';
-import FamilyTree from './modules/FamilyTree';
+import NavBar from './components/NavBar';
+import Home from './components/Home';
+import FamilyTree from './components/FamilyTree';
 
 function App() {
   return (

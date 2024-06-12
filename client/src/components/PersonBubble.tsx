@@ -1,20 +1,8 @@
 import React from 'react';
-import { Person } from '../interfaces/Person';
+import { PersonProps } from '../interfaces/Person';
 import defaultImage from '../public/Default Image.svg'; // Adjust the path as necessary
 
-interface PersonsComponentProps {
-  person: Person;
-  spouse?: Person;
-  onClick: () => void;
-  isSelf?: boolean;
-}
-
-function PersonsComponent({
-  person,
-  spouse,
-  onClick,
-  isSelf,
-}: PersonsComponentProps) {
+function PersonBubble({ person, spouse, onClick, isSelf }: PersonProps) {
   return (
     <div
       className={`bubble ${isSelf ? 'self-bubble' : 'child-bubble'}`}
@@ -61,4 +49,4 @@ function PersonsComponent({
   );
 }
 
-export default PersonsComponent;
+export default PersonBubble;

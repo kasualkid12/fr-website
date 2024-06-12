@@ -13,3 +13,10 @@ export interface Person {
 export interface PersonWithSpouse extends Person {
   spouse?: Person;
 }
+
+export interface PersonProps {
+  person: Person;
+  spouse?: Person;
+  onClick: () => void;
+  isSelf?: boolean;
+}

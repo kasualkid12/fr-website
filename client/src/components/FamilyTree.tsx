@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import '../styles/FamilyTree.scss';
-import PersonsComponent from './Persons';
+import '../styles/FamilyTreeDesktop.scss';
+import '../styles/FamilyTreeMobile.scss';
+import PersonBubble from './PersonBubble';
 import { Person, PersonWithSpouse } from '../interfaces/Person';
 
 function FamilyTree() {
@@ -56,7 +58,7 @@ function FamilyTree() {
     setSelectedPersonId(1);
   };
 
-  const createPersonBubbles = (persons: Person[]) => {
+  const createPersonBubblesDesktop = (persons: Person[]) => {
     const bubbles = [];
     let sourcePerson: PersonWithSpouse | null = null;
     const children: PersonWithSpouse[] = [];
@@ -91,22 +93,24 @@ function FamilyTree() {
           key={sourcePerson.id}
           id={`person-${sourcePerson.id}`}
         >
-          <PersonsComponent
+          <PersonBubble
             person={sourcePerson}
             spouse={sourcePerson.spouse}
             onClick={() => handlePersonClick(sourcePerson!.id)}
             isSelf={true}
+            key={`${sourcePerson.firstName} ${sourcePerson.lastName}-${sourcePerson.id}`}
           />
         </div>
       );
 
       const childBubbles = children.map((child) => (
         <div className="child-bubble" key={child.id} id={`person-${child.id}`}>
-          <PersonsComponent
+          <PersonBubble
             person={child}
             spouse={child.spouse}
             onClick={() => handlePersonClick(child.id)}
             isSelf={false}
+            key={`${child.firstName} ${child.lastName}-${child.id}`}
           />
         </div>
       ));
@@ -169,7 +173,8 @@ function FamilyTree() {
           ↑
         </button>
       )}
-      {createPersonBubbles(persons)}
+      {createPersonBubblesDesktop(persons)}
+      {/* add mobile view */}
       <svg className="lines" ref={svgRef}>
         {/* Lines will be appended here */}
       </svg>

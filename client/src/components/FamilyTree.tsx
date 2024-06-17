@@ -2,15 +2,24 @@ import React, { useEffect, useState, useRef } from 'react';
 import '../styles/FamilyTree.scss';
 import '../styles/FamilyTreeDesktop.scss';
 import '../styles/FamilyTreeMobile.scss';
-import PersonBubble from './PersonBubble';
-import { Person, PersonWithSpouse } from '../interfaces/Person';
+import FamilyTreeDesktop from './FamilyTreeDesktop';
+import { Person } from '../interfaces/Person';
 
+/**
+ * FamilyTree component that renders the family tree.
+ * It fetches the persons and handles the navigation between persons.
+ */
 function FamilyTree() {
-  const [persons, setPersons] = useState<Person[]>([]);
-  const [selectedPersonId, setSelectedPersonId] = useState<number>(1);
-  const [history, setHistory] = useState<number[]>([]);
-  const svgRef = useRef<SVGSVGElement>(null);
+  // State variables
+  const [persons, setPersons] = useState<Person[]>([]); // Array of persons
+  const [selectedPersonId, setSelectedPersonId] = useState<number>(1); // Id of the selected person
+  const [history, setHistory] = useState<number[]>([]); // History of selected person ids
+  const svgRef = useRef<SVGSVGElement>(null); // Reference to the SVG element
 
+  /**
+   * Fetches the persons from the backend.
+   * @param {number} id - The id of the person to start fetching from.
+   */
   const fetchPersons = (id: number) => {
     fetch(`http://localhost:8080/persons`, {
       method: 'POST',
@@ -29,19 +38,25 @@ function FamilyTree() {
       .catch((error) => console.error('Error fetching data:', error));
   };
 
+  // Fetch persons when selectedPersonId changes
   useEffect(() => {
     fetchPersons(selectedPersonId);
   }, [selectedPersonId]);
 
-  useEffect(() => {
-    renderLines();
-  }, [persons]);
-
+  /**
+   * Handles the click event on a person.
+   * Adds the selected person id to the history and updates the selected person id.
+   * @param {number} id - The id of the person that was clicked.
+   */
   const handlePersonClick = (id: number) => {
     setHistory((prevHistory) => [...prevHistory, selectedPersonId]);
     setSelectedPersonId(id);
   };
 
+  /**
+   * Handles the click event on the go back button.
+   * Pops the last person id from the history and updates the selected person id.
+   */
   const handleGoBack = () => {
     setHistory((prevHistory) => {
       const newHistory = [...prevHistory];
@@ -53,131 +68,28 @@ function FamilyTree() {
     });
   };
 
+  /**
+   * Handles the click event on the go to top button.
+   * Resets the history and updates the selected person id to 1.
+   */
   const handleGoToTop = () => {
     setHistory([]);
     setSelectedPersonId(1);
   };
 
-  const createPersonBubblesDesktop = (persons: Person[]) => {
-    const bubbles = [];
-    let sourcePerson: PersonWithSpouse | null = null;
-    const children: PersonWithSpouse[] = [];
-
-    for (let i = 0; i < persons.length; i++) {
-      if (!sourcePerson) {
-        sourcePerson = persons[i];
-        if (
-          i < persons.length - 1 &&
-          persons[i + 1].relationship.includes('Spouse')
-        ) {
-          sourcePerson = { ...sourcePerson, spouse: persons[i + 1] };
-          i++; // Skip the next person since they are the spouse
-        }
-      } else if (persons[i].relationship.includes('Child')) {
-        let child: PersonWithSpouse = persons[i];
-        if (
-          i < persons.length - 1 &&
-          persons[i + 1].relationship.includes('Spouse')
-        ) {
-          child = { ...child, spouse: persons[i + 1] };
-          i++; // Skip the next person since they are the spouse
-        }
-        children.push(child);
-      }
-    }
-
-    if (sourcePerson) {
-      bubbles.push(
-        <div
-          className="source-bubble"
-          key={sourcePerson.id}
-          id={`person-${sourcePerson.id}`}
-        >
-          <PersonBubble
-            person={sourcePerson}
-            spouse={sourcePerson.spouse}
-            onClick={() => handlePersonClick(sourcePerson!.id)}
-            isSelf={true}
-            key={`${sourcePerson.firstName} ${sourcePerson.lastName}-${sourcePerson.id}`}
-          />
-        </div>
-      );
-
-      const childBubbles = children.map((child) => (
-        <div className="child-bubble" key={child.id} id={`person-${child.id}`}>
-          <PersonBubble
-            person={child}
-            spouse={child.spouse}
-            onClick={() => handlePersonClick(child.id)}
-            isSelf={false}
-            key={`${child.firstName} ${child.lastName}-${child.id}`}
-          />
-        </div>
-      ));
-
-      bubbles.push(<div className="children">{childBubbles}</div>);
-    }
-
-    return bubbles;
-  };
-
-  const renderLines = () => {
-    const svgElement = svgRef.current;
-    if (!svgElement) return;
-
-    const svgNS = 'http://www.w3.org/2000/svg'; // SVG namespace
-    svgElement.innerHTML = ''; // Clear existing lines
-    const parentElement = document.getElementById(`person-${selectedPersonId}`);
-    if (!parentElement) return;
-
-    const parentRect = parentElement.getBoundingClientRect();
-
-    persons.forEach((person, index) => {
-      if (index === 0) return;
-      const child = persons[index];
-      if (!child.relationship.includes('Child')) return;
-      const childElement = document.getElementById(`person-${child.id}`);
-      if (!childElement) return;
-      const childRect = childElement.getBoundingClientRect();
-
-      const line = document.createElementNS(svgNS, 'line');
-      line.setAttribute(
-        'x1',
-        (parentRect.left + parentRect.width / 2).toString()
-      );
-      line.setAttribute(
-        'y1',
-        (parentRect.top + window.scrollY + parentRect.height / 2).toString()
-      );
-      line.setAttribute(
-        'x2',
-        (childRect.left + childRect.width / 2).toString()
-      );
-      line.setAttribute(
-        'y2',
-        (childRect.top + window.scrollY + childRect.height / 2).toString()
-      );
-      line.setAttribute('stroke', '#faf9f6');
-      line.setAttribute('stroke-width', '2');
-      svgElement.appendChild(line);
-    });
-  };
-
   return (
     <div className="FamilyTree">
-      <button className="go-to-top" onClick={handleGoToTop}>
-        Go to Top
-      </button>
-      {history.length > 0 && (
-        <button className="go-back" onClick={handleGoBack}>
-          ↑
-        </button>
-      )}
-      {createPersonBubblesDesktop(persons)}
-      {/* add mobile view */}
-      <svg className="lines" ref={svgRef}>
-        {/* Lines will be appended here */}
-      </svg>
+      {/* FamilyTreeDesktop component */}
+      <FamilyTreeDesktop
+        persons={persons}
+        selectedPersonId={selectedPersonId}
+        history={history}
+        handlePersonClick={handlePersonClick}
+        handleGoBack={handleGoBack}
+        handleGoToTop={handleGoToTop}
+        svgRef={svgRef}
+      />
+      {/* Add mobile view */}
     </div>
   );
 }

@@ -1,3 +1,5 @@
+import { RefObject } from 'react';
+
 export interface Person {
   id: number;
   firstName: string;
@@ -19,4 +21,14 @@ export interface PersonProps {
   spouse?: Person;
   onClick: () => void;
   isSelf?: boolean;
+}
+
+export interface PersonsProps {
+  persons: Person[];
+  selectedPersonId: number;
+  history: number[];
+  handlePersonClick: (id: number) => void;
+  handleGoBack: () => void;
+  handleGoToTop: () => void;
+  svgRef: RefObject<SVGSVGElement>;
 }

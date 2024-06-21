@@ -1,24 +1,25 @@
 import React, { useEffect } from 'react';
+import '../styles/FamilyTreeDesktop.scss';
 import PersonBubble from './PersonBubble';
-import { Person, PersonsProps, PersonWithSpouse } from '../interfaces/Person';
+import { Person, ViewProps, PersonWithSpouse } from '../interfaces/Person';
 
 /**
  * FamilyTreeDesktop component renders a family tree with person bubbles and lines connecting them.
  * It takes an array of persons, a function to handle person click, a reference to an SVG element where the lines will be rendered, and an id of the currently selected person.
  * It returns a div containing the person bubbles and the SVG element.
  *
- * @param {PersonsProps} props - The props object containing the persons, handlePersonClick, svgRef, and selectedPersonId.
+ * @param {ViewProps} props - The props object containing the persons, handlePersonClick, svgRef, and selectedPersonId.
  * @returns {JSX.Element} - The FamilyTreeDesktop component.
  */
 function FamilyTreeDesktop({
   persons, // The array of persons to render
   selectedPersonId, // The id of the currently selected person
-  history,
+  history, // The history of selected person ids
   handlePersonClick, // The function to handle person click
   handleGoBack, // The function to handle go back click
   handleGoToTop, // The function to handle go to top click
   svgRef, // The reference to the SVG element where the lines will be rendered
-}: PersonsProps): JSX.Element {
+}: ViewProps): JSX.Element {
   // Render the lines whenever the persons array changes
   useEffect(() => {
     renderLines();
@@ -31,7 +32,7 @@ function FamilyTreeDesktop({
    * @param {Person[]} persons - The array of persons to create bubbles for.
    * @returns {JSX.Element[]} - The array of JSX elements representing the person bubbles.
    */
-  const createPersonBubblesDesktop = (persons: Person[]): JSX.Element[] => {
+  const createPersonBubbles = (persons: Person[]): JSX.Element[] => {
     const bubbles: JSX.Element[] = [];
     let sourcePerson: PersonWithSpouse | null = null;
     const children: PersonWithSpouse[] = [];
@@ -73,7 +74,7 @@ function FamilyTreeDesktop({
             spouse={sourcePerson.spouse}
             onClick={() => handlePersonClick(sourcePerson!.id)}
             isSelf={true}
-            key={`${sourcePerson.firstName} ${sourcePerson.lastName}-${sourcePerson.id}`}
+            key={sourcePerson.id}
           />
         </div>
       );
@@ -86,7 +87,7 @@ function FamilyTreeDesktop({
             spouse={child.spouse}
             onClick={() => handlePersonClick(child.id)}
             isSelf={false}
-            key={`${child.firstName} ${child.lastName}-${child.id}`}
+            key={child.id}
           />
         </div>
       ));
@@ -115,7 +116,7 @@ function FamilyTreeDesktop({
     // Iterate through the persons array and create lines for each child
     persons.forEach((person, index) => {
       if (index === 0) return;
-      const child = persons[index];
+      const child = person;
       if (!child.relationship.includes('Child')) return;
       const childElement = document.getElementById(`person-${child.id}`);
       if (!childElement) return;
@@ -149,7 +150,7 @@ function FamilyTreeDesktop({
     <div className="FamilyTreeDesktop">
       {/* Go to Top button */}
       <button className="go-to-top" onClick={handleGoToTop}>
-        Go to Top
+        Top of Tree
       </button>
       {/* Go Back button */}
       {history.length > 0 && (
@@ -157,7 +158,7 @@ function FamilyTreeDesktop({
           ↑
         </button>
       )}
-      {createPersonBubblesDesktop(persons)}
+      {createPersonBubbles(persons)}
       <svg className="lines" ref={svgRef}>
         {/* Lines will be appended here */}
       </svg>

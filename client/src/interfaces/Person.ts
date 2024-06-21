@@ -23,7 +23,7 @@ export interface PersonProps {
   isSelf?: boolean;
 }
 
-export interface PersonsProps {
+export interface ViewProps {
   persons: Person[];
   selectedPersonId: number;
   history: number[];

@@ -130,9 +130,12 @@ body {
             cursor: pointer;
 
             .person-image {
-              width: 40px;
-              height: 40px;
+              width: 50px;
+              height: 50px;
               border-radius: 50%;
+              border-style: solid;
+              border-width: 1px;
+              border-color: $darkmain;
               object-fit: cover;
               margin-right: 1rem;
             }

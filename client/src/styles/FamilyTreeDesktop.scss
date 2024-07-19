@@ -11,15 +11,16 @@ body {
   position: relative;
   width: 100vw;
   padding-top: 3rem;
-  color: $lightmain; /* Assuming you have a light text color variable */
+  color: $lightmain;
   font-family: Arial, sans-serif;
 
   .go-back {
     position: absolute;
+    z-index: 98;
     top: 4rem;
     left: 50%;
     transform: translateX(-50%);
-    background-color: #ccc;
+    background-color: $lightmain;
     border: none;
     border-radius: 50%;
     width: 3rem;
@@ -33,9 +34,10 @@ body {
 
   .go-to-top {
     position: absolute;
+    z-index: 98;
     top: 4rem;
     right: 1rem;
-    background-color: #ccc;
+    background-color: $lightmain;
     border: none;
     border-radius: 5px;
     padding: 1rem;
@@ -43,19 +45,73 @@ body {
     cursor: pointer;
   }
 
+  /* PersonBubble.scss */
+  .bubble {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 10rem;
+    height: 10rem;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    background-color: $bubblebackground;
+    border: 2px solid $lightmain;
+  
+    .bubble-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+  
+      .images-container {
+        display: flex;
+  
+        .person-image,
+        .spouse-image {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          margin: 5px;
+        }
+      }
+  
+      .overlay {
+        display: none;
+        position: absolute;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        color: $lightmain;
+        width: 100%;
+        padding: 10px;
+        border-radius: 0 0 50% 50%;
+        font-size: 12px;
+      }
+    }
+  }
+  
   .self {
     position: relative;
     display: flex;
     flex-direction: row;
+    justify-content: center;
     align-items: center;
-    padding-top: 10rem;
+    padding-top: 5rem;
     margin-bottom: 50px;
+    
+    .self-bubble {
+      border: 3px solid $highlightself;
+      right: 5%;
+      width: 20rem;
+      height: 20rem;
+    }
 
     .self-details-box {
-      position: absolute;
-      top: 100px; /* Adjust based on your layout */
-      left: 50%;
-      transform: translateX(-50%);
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      left: 5%;
       background: rgba(0, 0, 0, 0.7);
       padding: 10px;
       border-radius: 10px;
@@ -63,7 +119,7 @@ body {
 
       .self-details,
       .spouse-details {
-        margin: 5px 0;
+        margin: 10px;
       }
     }
   }
@@ -71,10 +127,10 @@ body {
   .children {
     display: flex;
     justify-content: space-around;
-    margin-top: 50px;
+    margin-top: 10rem;
 
     .child-bubble {
-      position: relative;
+      border: 3px solid $highlightchild;
     }
 
     .child-bubble:hover .overlay {
@@ -90,60 +146,6 @@ body {
     height: 100%;
     pointer-events: none;
   }
-}
-
-/* PersonBubble.scss */
-.bubble {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  overflow: hidden;
-  cursor: pointer;
-  background-color: $bubblebackground; /* Assuming you have a bubble background color variable */
-  border: 2px solid $lightmain;
-
-  .bubble-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    .images-container {
-      display: flex;
-
-      .person-image,
-      .spouse-image {
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        margin: 5px;
-      }
-    }
-
-    .overlay {
-      display: none;
-      position: absolute;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
-      color: $lightmain;
-      width: 100%;
-      text-align: center;
-      padding: 5px;
-      border-radius: 0 0 50% 50%;
-      font-size: 12px;
-    }
-  }
-}
-
-.self-bubble {
-  border: 3px solid $highlightself; /* Assuming you have a highlight color for self bubble */
-}
-
-.child-bubble {
-  border: 3px solid $highlightchild; /* Assuming you have a highlight color for child bubble */
 }
 
 // @import './fonts';

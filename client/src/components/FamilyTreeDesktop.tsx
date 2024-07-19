@@ -21,9 +21,9 @@ function FamilyTreeDesktop({
   svgRef, // The reference to the SVG element where the lines will be rendered
 }: ViewProps): JSX.Element {
   // Render the lines whenever the persons array changes
-  useEffect(() => {
-    renderLines();
-  }, [persons]);
+  // useEffect(() => {
+  //   renderLines();
+  // }, [persons]);
 
   /**
    * Create person bubbles for the desktop view.
@@ -117,62 +117,64 @@ function FamilyTreeDesktop({
    * Render the lines connecting the person bubbles.
    * It calculates the coordinates of the lines and appends them to the SVG element.
    */
-  const renderLines = (): void => {
-    const svgElement = svgRef.current;
-    if (!svgElement) return;
+  // const renderLines = (): void => {
+  //   const svgElement = svgRef.current;
+  //   if (!svgElement) return;
 
-    const svgNS = 'http://www.w3.org/2000/svg'; // SVG namespace
-    svgElement.innerHTML = ''; // Clear existing lines
-    const parentElement = document.getElementById(`person-${selectedPersonId}`);
-    if (!parentElement) return;
+  //   const svgNS = 'http://www.w3.org/2000/svg'; // SVG namespace
+  //   svgElement.innerHTML = ''; // Clear existing lines
+  //   const parentElement = document.getElementById(`person-${selectedPersonId}`);
+  //   if (!parentElement) return;
 
-    const parentRect = parentElement.getBoundingClientRect();
+  //   const parentRect = parentElement.getBoundingClientRect();
 
-    // Iterate through the persons array and create lines for each child
-    persons.forEach((person, index) => {
-      if (index === 0) return;
-      const child = person;
-      if (!child.relationship.includes('Child')) return;
-      const childElement = document.getElementById(`person-${child.id}`);
-      if (!childElement) return;
-      const childRect = childElement.getBoundingClientRect();
+  //   // Iterate through the persons array and create lines for each child
+  //   persons.forEach((person, index) => {
+  //     if (index === 0) return;
+  //     const child = person;
+  //     if (!child.relationship.includes('Child')) return;
+  //     const childElement = document.getElementById(`person-${child.id}`);
+  //     if (!childElement) return;
+  //     const childRect = childElement.getBoundingClientRect();
 
-      const line = document.createElementNS(svgNS, 'line');
-      line.setAttribute(
-        'x1',
-        (parentRect.left + parentRect.width / 2).toString()
-      );
-      line.setAttribute(
-        'y1',
-        (parentRect.top + window.scrollY + parentRect.height / 2).toString()
-      );
-      line.setAttribute(
-        'x2',
-        (childRect.left + childRect.width / 2).toString()
-      );
-      line.setAttribute(
-        'y2',
-        (childRect.top + window.scrollY + childRect.height / 2).toString()
-      );
-      line.setAttribute('stroke', '#faf9f6');
-      line.setAttribute('stroke-width', '2');
-      svgElement.appendChild(line);
-    });
-  };
+  //     const line = document.createElementNS(svgNS, 'line');
+  //     line.setAttribute(
+  //       'x1',
+  //       (parentRect.left + parentRect.width / 2).toString()
+  //     );
+  //     line.setAttribute(
+  //       'y1',
+  //       (parentRect.top + window.scrollY + parentRect.height / 2).toString()
+  //     );
+  //     line.setAttribute(
+  //       'x2',
+  //       (childRect.left + childRect.width / 2).toString()
+  //     );
+  //     line.setAttribute(
+  //       'y2',
+  //       (childRect.top + window.scrollY + childRect.height / 2).toString()
+  //     );
+  //     line.setAttribute('stroke', '#faf9f6');
+  //     line.setAttribute('stroke-width', '2');
+  //     svgElement.appendChild(line);
+  //   });
+  // };
 
   // Return the FamilyTreeDesktop component containing the person bubbles and the SVG element
   return (
     <div className="FamilyTreeDesktop">
-        {/* Go Back button */}
-        {history.length > 0 && (
-          <button className="go-back" onClick={handleGoBack}>
-            ↑
-          </button>
-        )}
-        {/* Go to Top button */}
+      {/* Go Back button */}
+      {history.length > 0 && (
+        <button className="go-back" onClick={handleGoBack}>
+          ↑
+        </button>
+      )}
+      {/* Go to Top button */}
+      {history.length > 0 && (
         <button className="go-to-top" onClick={handleGoToTop}>
           Top of Tree
         </button>
+      )}
       <div className="family-tree-container">
         {createPersonBubbles(persons)}
       </div>

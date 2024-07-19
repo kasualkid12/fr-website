@@ -19,7 +19,7 @@ export interface PersonWithSpouse extends Person {
 export interface PersonProps {
   person: Person;
   spouse?: Person;
-  onClick: () => void;
+  onClick?: () => void;
   isSelf?: boolean;
 }
 

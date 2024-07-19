@@ -6,7 +6,7 @@ function PersonBubble({ person, spouse, onClick, isSelf }: PersonProps) {
   return (
     <div
       className={`bubble ${isSelf ? 'self-bubble' : 'child-bubble'}`}
-      onClick={onClick}
+      onClick={isSelf ? undefined : onClick}
       id={`person-${person.id}`}
     >
       <div className="bubble-content">
@@ -24,26 +24,14 @@ function PersonBubble({ person, spouse, onClick, isSelf }: PersonProps) {
             />
           )}
         </div>
-        <div className="overlay">
-          <p>
-            {person.firstName} {spouse ? `& ${spouse.firstName}` : ''}{' '}
-            {person.lastName}
-          </p>
-          <p>
-            {isSelf
-              ? `${person.birthDate} ${
-                  person.deathDate ? `- ${person.deathDate}` : ''
-                }`
-              : ''}
-          </p>
-          <p>
-            {isSelf && spouse
-              ? `${spouse.birthDate} ${
-                  spouse.deathDate ? `- ${spouse.deathDate}` : ''
-                }`
-              : ''}
-          </p>
-        </div>
+        {!isSelf ? (
+          <div className="overlay">
+            <p>
+              {person.firstName} {spouse ? `& ${spouse.firstName}` : ''}{' '}
+              {person.lastName}
+            </p>
+          </div>
+        ) : null}
       </div>
     </div>
   );

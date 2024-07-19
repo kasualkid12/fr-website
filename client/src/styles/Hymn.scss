@@ -1,12 +1,12 @@
 @import './fonts';
 @import './colors';
 
-.AboutPage {
+.Hymn {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  min-height: 50vh;
   width: 100%;
   overflow: hidden;
   background-color: $darkmain;

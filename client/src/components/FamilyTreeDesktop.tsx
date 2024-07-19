@@ -34,18 +34,18 @@ function FamilyTreeDesktop({
    */
   const createPersonBubbles = (persons: Person[]): JSX.Element[] => {
     const bubbles: JSX.Element[] = [];
-    let sourcePerson: PersonWithSpouse | null = null;
+    let selfPerson: PersonWithSpouse | null = null;
     const children: PersonWithSpouse[] = [];
 
     // Iterate through the persons array and create bubbles for each person
     for (let i = 0; i < persons.length; i++) {
-      if (!sourcePerson) {
-        sourcePerson = persons[i];
+      if (!selfPerson) {
+        selfPerson = persons[i];
         if (
           i < persons.length - 1 &&
           persons[i + 1].relationship.includes('Spouse')
         ) {
-          sourcePerson = { ...sourcePerson, spouse: persons[i + 1] };
+          selfPerson = { ...selfPerson, spouse: persons[i + 1] };
           i++; // Skip the next person since they are the spouse
         }
       } else if (persons[i].relationship.includes('Child')) {
@@ -62,26 +62,41 @@ function FamilyTreeDesktop({
     }
 
     // Create a bubble for the source person and add it to the bubbles array
-    if (sourcePerson) {
+    if (selfPerson) {
       bubbles.push(
         <div
-          className="source-bubble"
-          key={sourcePerson.id}
-          id={`person-${sourcePerson.id}`}
+          className="self"
+          key={selfPerson.id}
+          id={`person-${selfPerson.id}`}
         >
           <PersonBubble
-            person={sourcePerson}
-            spouse={sourcePerson.spouse}
-            onClick={() => handlePersonClick(sourcePerson!.id)}
+            person={selfPerson}
+            spouse={selfPerson.spouse}
             isSelf={true}
-            key={sourcePerson.id}
+            key={selfPerson.id}
           />
+          <div className="self-details-box">
+            <div className="self-details">
+              <p>
+                {selfPerson.firstName} {selfPerson.lastName}
+              </p>
+              {/* TODO: Add self details */}
+              <p>TODO: Add self details</p>
+            </div>
+            <div className="spouse-details">
+              <p>
+                {selfPerson.spouse?.firstName} {selfPerson.spouse?.lastName}
+              </p>
+              {/* TODO: Add spouse details */}
+              <p>TODO: Add spouse details</p>
+            </div>
+          </div>
         </div>
       );
 
       // Create bubbles for the children and add them to the bubbles array
       const childBubbles = children.map((child) => (
-        <div className="child-bubble" key={child.id} id={`person-${child.id}`}>
+        <div key={child.id} id={`person-${child.id}`}>
           <PersonBubble
             person={child}
             spouse={child.spouse}
@@ -148,17 +163,19 @@ function FamilyTreeDesktop({
   // Return the FamilyTreeDesktop component containing the person bubbles and the SVG element
   return (
     <div className="FamilyTreeDesktop">
-      {/* Go to Top button */}
-      <button className="go-to-top" onClick={handleGoToTop}>
-        Top of Tree
-      </button>
-      {/* Go Back button */}
-      {history.length > 0 && (
-        <button className="go-back" onClick={handleGoBack}>
-          ↑
+        {/* Go Back button */}
+        {history.length > 0 && (
+          <button className="go-back" onClick={handleGoBack}>
+            ↑
+          </button>
+        )}
+        {/* Go to Top button */}
+        <button className="go-to-top" onClick={handleGoToTop}>
+          Top of Tree
         </button>
-      )}
-      {createPersonBubbles(persons)}
+      <div className="family-tree-container">
+        {createPersonBubbles(persons)}
+      </div>
       <svg className="lines" ref={svgRef}>
         {/* Lines will be appended here */}
       </svg>

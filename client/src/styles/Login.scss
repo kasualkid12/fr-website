@@ -6,4 +6,62 @@
   width: 100%;
   overflow: hidden;
   background-color: $darkmain;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.LoginContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  width: 85%;
+  overflow: hidden;
+  background-color: $lightmain;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+}
+
+.LoginForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.LoginInput {
+  width: 75%;
+  height: 2rem;
+  margin-bottom: 1rem;
+  border-radius: 5px;
+  border: none;
+  padding: 0.5rem;
+  font-size: 1rem;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.LoginButton {
+  width: 50%;
+  height: 2rem;
+  margin-bottom: 1rem;
+  border-radius: 5px;
+  border: none;
+  padding: 0.5rem;
+  font-size: 1rem;
+  font-family: Arial, sans-serif;
+  background-color: $darkmain;
+  color: $lightmain;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.SignUpButton {
+  justify-self: flex-end;
+  align-self: flex-end;
 }

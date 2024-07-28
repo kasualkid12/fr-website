@@ -4,11 +4,13 @@ import './styles/App.scss';
 import NavBar from './components/NavBar';
 import Home from './components/Home';
 import FamilyTree from './components/FamilyTree';
+import Login from './components/Login';
 
 function App() {
   return (
     <div className="App">
       <Router>
+        {/* <Login /> */}
         <NavBar />
         <Routes>
           <Route path="/" element={<Home />} />

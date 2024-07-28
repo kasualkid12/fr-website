@@ -113,6 +113,8 @@ function FamilyTreeDesktop({
     return bubbles;
   };
 
+  // TODO: fix render lines function for new desktop view
+
   /**
    * Render the lines connecting the person bubbles.
    * It calculates the coordinates of the lines and appends them to the SVG element.

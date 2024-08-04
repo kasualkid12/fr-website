@@ -23,6 +23,8 @@ function NavBar() {
       <div className={`DropdownMenu ${isOpen ? 'open' : ''}`}>
           <a className="NavItem" href="/">Home</a>
           <a className="NavItem" href="/family-tree">Family Tree</a>
+          <a className="NavItem" href="/history">History</a>
+
         </div>
       {/* Can be added back when accounts are added */}
       {/* <div className="ProfileImage">

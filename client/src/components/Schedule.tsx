@@ -10,15 +10,15 @@ function Schedule() {
       <div className='Days'>
         <div className='Day'>
         <h2>Friday</h2>
-        <p>TODO: Add Friday schedule</p>
+        <p>To be Announced</p>
         </div>
         <div className='Day'>
         <h2>Saturday</h2>
-        <p>TODO: Add Saturday schedule</p>
+        <p>To be Announced</p>
         </div>
         <div className='Day'>
         <h2>Sunday</h2>
-        <p>TODO: Add Sunday schedule</p>
+        <p>To be Announced</p>
         </div>
       </div>
     </div>

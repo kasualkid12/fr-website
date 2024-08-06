@@ -10,16 +10,43 @@ import (
 	"github.com/kasualkid12/fr-website/server/handlers/personhandlers"
 	grabenv "github.com/kasualkid12/fr-website/server/modules/grabEnv"
 	_ "github.com/lib/pq"
+	"github.com/minio/minio-go"
 	"github.com/rs/cors"
 )
 
 func main() {
 	router := mux.NewRouter()
 
-	host, port, user, password, dbname := grabenv.GrabEnv()
+	// // make new bucket to test
+	// bucketName := "test-bucket"
+	// location := "us-east-1"
+
+	// err = minioClient.MakeBucket(bucketName, location)
+	// if err != nil {
+	// 	exists, errBucketExists := minioClient.BucketExists(bucketName)
+	// 	if errBucketExists == nil && exists {
+	// 		log.Printf("We already own %s\n", bucketName)
+	// 	} else {
+	// 		log.Fatalln(err)
+	// 	}
+	// } else {
+	// 	log.Printf("Successfully created %s\n", bucketName)
+	// }
+
+	// // Upload image to bucket
+	// objectName := "test.jpg"
+	// filePath := "a-file.jpg"
+	// // contentType := "image/jpeg"
+
+	// if err := minioClient.FGetObject(bucketName, objectName, filePath, minio.GetObjectOptions{}); err != nil {
+	// 	log.Fatalln(err)
+	// }
+	// log.Printf("Successfully saved %s\n", objectName)
+
+	host, port, user, password, dbName, minioEndpoint, minioAccessKeyID, minioSecretKey, minioUseSSL := grabenv.GrabEnv()
 
 	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
+		host, port, user, password, dbName)
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
@@ -31,7 +58,16 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	fmt.Println("Successfully connected!")
+
+	// Connect to MinIO
+	_, err = minio.New(minioEndpoint, minioAccessKeyID, minioSecretKey, minioUseSSL)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	fmt.Println("Connected to MinIO")
 
 	// Use the handler from the person package
 	router.HandleFunc("/persons", personhandlers.GetPersonsHandler(db)).Methods("POST")

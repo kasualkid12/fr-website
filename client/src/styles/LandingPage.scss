@@ -5,6 +5,7 @@
   min-height: 100vh;
   width: 100%;
   overflow: hidden;
+  user-select: none;
   background-image: url('../public/Reunion\ 2023\ Earl\ Park.jpg');
   background-repeat: no-repeat;
   background-size: cover; // Use cover to ensure the background image always covers the viewport

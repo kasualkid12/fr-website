@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/kasualkid12/fr-website/server/handlers/personhandlers"
 	grabenv "github.com/kasualkid12/fr-website/server/modules/grabEnv"
+	miniomodule "github.com/kasualkid12/fr-website/server/modules/minioModule"
 	_ "github.com/lib/pq"
 	"github.com/minio/minio-go"
 	"github.com/rs/cors"
@@ -62,12 +63,14 @@ func main() {
 	fmt.Println("Successfully connected!")
 
 	// Connect to MinIO
-	_, err = minio.New(minioEndpoint, minioAccessKeyID, minioSecretKey, minioUseSSL)
+	minioClient, err := minio.New(minioEndpoint, minioAccessKeyID, minioSecretKey, minioUseSSL)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	fmt.Println("Connected to MinIO")
+
+	miniomodule.RemoveObject(minioClient, "test-bucket", "Trey.jpg")
 
 	// Use the handler from the person package
 	router.HandleFunc("/persons", personhandlers.GetPersonsHandler(db)).Methods("POST")

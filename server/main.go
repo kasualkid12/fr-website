@@ -11,6 +11,7 @@ import (
 	"github.com/kasualkid12/fr-website/server/handlers/miniohandlers"
 	"github.com/kasualkid12/fr-website/server/handlers/personhandlers"
 	grabenv "github.com/kasualkid12/fr-website/server/modules/grabEnv"
+	"github.com/kasualkid12/fr-website/server/modules/metrics"
 	miniomodule "github.com/kasualkid12/fr-website/server/modules/minioModule"
 	_ "github.com/lib/pq"
 	"github.com/minio/minio-go"
@@ -69,7 +70,6 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 	fmt.Println("Connected to MinIO")
 
 	obj, err := miniomodule.GetObject(minioClient, "test-bucket", "Trey.jpg")
@@ -84,6 +84,9 @@ func main() {
 		return
 	}
 	defer localFile.Close()
+
+	// Add Prometheus metrics endpoint
+	router.Handle("/metrics", metrics.MetricsHandler())
 
 	// Handlers
 
@@ -102,7 +105,7 @@ func main() {
 	})
 
 	// Wrap the router with the CORS middleware
-	handler := c.Handler(router)
+	handler := metrics.MetricsMiddleware(c.Handler(router))
 
 	fmt.Println("Listening on port 8080...")
 	log.Fatal(http.ListenAndServe(":8080", handler))

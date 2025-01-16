@@ -16,8 +16,7 @@ type requestBody struct {
 func GetPersonsHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var reqBody requestBody
-		err := json.NewDecoder(r.Body).Decode(&reqBody)
-		if err != nil {
+		if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}

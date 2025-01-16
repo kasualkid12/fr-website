@@ -26,3 +26,13 @@ func RemoveObject(minioClient *minio.Client, bucketName string, objectName strin
 	fmt.Println("Successfully removed object: ", objectName)
 	return nil
 }
+
+func GetObject(minioClient *minio.Client, bucketName string, objectName string) (*minio.Object, error) {
+	object, err := minioClient.GetObject(bucketName, objectName, minio.GetObjectOptions{})
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	fmt.Println("Successfully got object: ", objectName)
+	return object, nil
+}

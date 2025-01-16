@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/kasualkid12/fr-website/server/handlers/miniohandlers"
 	"github.com/kasualkid12/fr-website/server/handlers/personhandlers"
 	grabenv "github.com/kasualkid12/fr-website/server/modules/grabEnv"
 	miniomodule "github.com/kasualkid12/fr-website/server/modules/minioModule"
@@ -70,10 +72,26 @@ func main() {
 
 	fmt.Println("Connected to MinIO")
 
-	miniomodule.RemoveObject(minioClient, "test-bucket", "Trey.jpg")
+	obj, err := miniomodule.GetObject(minioClient, "test-bucket", "Trey.jpg")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer obj.Close()
 
-	// Use the handler from the person package
+	localFile, err := os.Create("/tmp/local-file.jpg")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer localFile.Close()
+
+	// Handlers
+
+	// Person handlers
 	router.HandleFunc("/persons", personhandlers.GetPersonsHandler(db)).Methods("POST")
+
+	// Minio handlers
+	router.HandleFunc("/minio/addobject", miniohandlers.AddObjectHandler(minioClient)).Methods("POST")
 
 	// Configure CORS
 	c := cors.New(cors.Options{

@@ -11,43 +11,20 @@ import (
 	"github.com/kasualkid12/fr-website/server/handlers/personhandlers"
 	grabenv "github.com/kasualkid12/fr-website/server/modules/grabEnv"
 	"github.com/kasualkid12/fr-website/server/modules/metrics"
-	miniomodule "github.com/kasualkid12/fr-website/server/modules/minioModule"
 	_ "github.com/lib/pq"
 	"github.com/minio/minio-go"
 	"github.com/rs/cors"
 )
 
 func main() {
+	// Create router
 	router := mux.NewRouter()
 
-	// // make new bucket to test
-	// bucketName := "test-bucket"
-	// location := "us-east-1"
-
-	// err = minioClient.MakeBucket(bucketName, location)
-	// if err != nil {
-	// 	exists, errBucketExists := minioClient.BucketExists(bucketName)
-	// 	if errBucketExists == nil && exists {
-	// 		log.Printf("We already own %s\n", bucketName)
-	// 	} else {
-	// 		log.Fatalln(err)
-	// 	}
-	// } else {
-	// 	log.Printf("Successfully created %s\n", bucketName)
-	// }
-
-	// // Upload image to bucket
-	// objectName := "test.jpg"
-	// filePath := "a-file.jpg"
-	// // contentType := "image/jpeg"
-
-	// if err := minioClient.FGetObject(bucketName, objectName, filePath, minio.GetObjectOptions{}); err != nil {
-	// 	log.Fatalln(err)
-	// }
-	// log.Printf("Successfully saved %s\n", objectName)
-
+	// Read environment variables
 	host, port, user, password, dbName, minioEndpoint, minioAccessKeyID, minioSecretKey, minioUseSSL := grabenv.GrabEnv()
 
+	//---------------------DATABASE CONNECTIONS------------------------
+	// Connect to PostgreSQL
 	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbName)
 
@@ -56,13 +33,11 @@ func main() {
 		log.Fatal("Error connecting to database:", err)
 	}
 	defer db.Close()
-
 	err = db.Ping()
 	if err != nil {
 		log.Fatal("Error connecting to database:", err)
 	}
-
-	fmt.Println("Successfully connected!")
+	fmt.Println("Successfully connected to PostgreSQL")
 
 	// Connect to MinIO
 	minioClient, err := minio.New(minioEndpoint, minioAccessKeyID, minioSecretKey, minioUseSSL)
@@ -71,30 +46,18 @@ func main() {
 	}
 	fmt.Println("Connected to MinIO")
 
-	obj, err := miniomodule.GetObject(minioClient, "test-bucket", "Trey.jpg")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer obj.Close()
-
-	// Download the object from MinIO to a local file
-	// localFile, err := os.Create("/tmp/local-file.jpg")
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
-	// defer localFile.Close()
-
+	//---------------------METRICS------------------------
 	// Add Prometheus metrics endpoint
 	router.Handle("/metrics", metrics.MetricsHandler())
 
-	// Handlers
-
+	//---------------------HANDLERS------------------------
 	// Person handlers
 	router.HandleFunc("/persons", personhandlers.GetPersonsHandler(db)).Methods("POST")
 
 	// Minio handlers
 	router.HandleFunc("/minio/addobject", miniohandlers.AddObjectHandler(minioClient)).Methods("POST")
+	router.HandleFunc("/minio/removeobject", miniohandlers.RemoveObjectHandler(minioClient)).Methods("DELETE")
+	router.HandleFunc("/minio/getobject", miniohandlers.GetObjectHandler(minioClient)).Methods("GET")
 
 	// Configure CORS
 	c := cors.New(cors.Options{
@@ -107,6 +70,7 @@ func main() {
 	// Wrap the router with the CORS middleware
 	handler := metrics.MetricsMiddleware(c.Handler(router))
 
+	// Start server
 	fmt.Println("Listening on port 8080...")
 	log.Fatal(http.ListenAndServe(":8080", handler))
 

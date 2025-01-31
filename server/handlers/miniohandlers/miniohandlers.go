@@ -30,3 +30,37 @@ func AddObjectHandler(minioClient *minio.Client) http.HandlerFunc {
 		w.WriteHeader(http.StatusOK)
 	}
 }
+
+func RemoveObjectHandler(minioClient *minio.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var reqBody requestBody
+		if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		if err := miniomodule.RemoveObject(minioClient, reqBody.bucketName, reqBody.objectName); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+	}
+}
+
+func GetObjectHandler(minioClient *minio.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var reqBody requestBody
+		if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		object, err := miniomodule.GetObject(minioClient, reqBody.bucketName, reqBody.objectName)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(object)
+	}
+}

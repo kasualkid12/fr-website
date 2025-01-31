@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/gorilla/mux"
 	"github.com/kasualkid12/fr-website/server/handlers/miniohandlers"
@@ -54,13 +53,13 @@ func main() {
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error connecting to database:", err)
 	}
 	defer db.Close()
 
 	err = db.Ping()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error connecting to database:", err)
 	}
 
 	fmt.Println("Successfully connected!")
@@ -68,7 +67,7 @@ func main() {
 	// Connect to MinIO
 	minioClient, err := minio.New(minioEndpoint, minioAccessKeyID, minioSecretKey, minioUseSSL)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatal("Error connecting to MinIO:", err)
 	}
 	fmt.Println("Connected to MinIO")
 
@@ -78,12 +77,13 @@ func main() {
 	}
 	defer obj.Close()
 
-	localFile, err := os.Create("/tmp/local-file.jpg")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer localFile.Close()
+	// Download the object from MinIO to a local file
+	// localFile, err := os.Create("/tmp/local-file.jpg")
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return
+	// }
+	// defer localFile.Close()
 
 	// Add Prometheus metrics endpoint
 	router.Handle("/metrics", metrics.MetricsHandler())

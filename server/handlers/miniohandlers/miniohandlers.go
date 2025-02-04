@@ -2,6 +2,7 @@ package miniohandlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	miniomodule "github.com/kasualkid12/fr-website/server/modules/minioModule"
@@ -9,21 +10,24 @@ import (
 )
 
 type requestBody struct {
-	bucketName  string `json:"bucketName"`
-	objectName  string `json:"objectName"`
-	filePath    string `json:"filePath"`
-	contentType string `json:"contentType"`
+	BucketName  string `json:"bucketName"`
+	ObjectName  string `json:"objectName"`
+	Location    string `json:"location"`
+	FilePath    string `json:"filePath"`
+	ContentType string `json:"contentType"`
 }
 
-func AddObjectHandler(minioClient *minio.Client) http.HandlerFunc {
+// ----------------------BUCKET HANDLERS------------------------
+// Make bucket
+func MakeBucketHandler(minioClient *minio.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var reqBody requestBody
 		if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-
-		if err := miniomodule.AddObject(minioClient, reqBody.bucketName, reqBody.objectName, reqBody.filePath, reqBody.contentType); err != nil {
+		fmt.Println(reqBody)
+		if err := miniomodule.MakeBucket(minioClient, reqBody.BucketName, reqBody.Location); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -31,6 +35,54 @@ func AddObjectHandler(minioClient *minio.Client) http.HandlerFunc {
 	}
 }
 
+// Remove bucket
+func RemoveBucketHandler(minioClient *minio.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var reqBody requestBody
+		if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		if err := miniomodule.RemoveBucket(minioClient, reqBody.BucketName); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+	}
+}
+
+// ----------------------OBJECT HANDLERS------------------------
+// Add object
+func AddObjectHandler(minioClient *minio.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Parse the multipart form, limiting in-memory data to 10MB.
+		if err := r.ParseMultipartForm(10 << 20); err != nil {
+			http.Error(w, "Error parsing multipart form: "+err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		// Retrieve text fields from the form data.
+		bucketName := r.FormValue("bucketName")
+		objectName := r.FormValue("objectName")
+		contentType := r.FormValue("contentType")
+
+		file, fileHeader, err := r.FormFile("file")
+		if err != nil {
+			http.Error(w, "Error retrieving the file: "+err.Error(), http.StatusBadRequest)
+			return
+		}
+		defer file.Close()
+
+		if err := miniomodule.AddObject(minioClient, bucketName, objectName, file, fileHeader.Size, contentType); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+	}
+}
+
+// Remove object
 func RemoveObjectHandler(minioClient *minio.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var reqBody requestBody
@@ -39,7 +91,7 @@ func RemoveObjectHandler(minioClient *minio.Client) http.HandlerFunc {
 			return
 		}
 
-		if err := miniomodule.RemoveObject(minioClient, reqBody.bucketName, reqBody.objectName); err != nil {
+		if err := miniomodule.RemoveObject(minioClient, reqBody.BucketName, reqBody.ObjectName); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -47,6 +99,7 @@ func RemoveObjectHandler(minioClient *minio.Client) http.HandlerFunc {
 	}
 }
 
+// Get object
 func GetObjectHandler(minioClient *minio.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var reqBody requestBody
@@ -55,7 +108,7 @@ func GetObjectHandler(minioClient *minio.Client) http.HandlerFunc {
 			return
 		}
 
-		object, err := miniomodule.GetObject(minioClient, reqBody.bucketName, reqBody.objectName)
+		object, err := miniomodule.GetObject(minioClient, reqBody.BucketName, reqBody.ObjectName)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return

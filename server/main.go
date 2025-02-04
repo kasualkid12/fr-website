@@ -55,10 +55,13 @@ func main() {
 	router.HandleFunc("/persons", personhandlers.GetPersonsHandler(db)).Methods("POST")
 
 	// Minio handlers
+	router.HandleFunc("/minio/makebucket", miniohandlers.MakeBucketHandler(minioClient)).Methods("POST")
+	router.HandleFunc("/minio/removebucket", miniohandlers.RemoveBucketHandler(minioClient)).Methods("DELETE")
 	router.HandleFunc("/minio/addobject", miniohandlers.AddObjectHandler(minioClient)).Methods("POST")
 	router.HandleFunc("/minio/removeobject", miniohandlers.RemoveObjectHandler(minioClient)).Methods("DELETE")
 	router.HandleFunc("/minio/getobject", miniohandlers.GetObjectHandler(minioClient)).Methods("GET")
 
+	//---------------------SERVER STARTUP------------------------
 	// Configure CORS
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:3000"}, // Adjust as needed

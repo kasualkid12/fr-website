@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { JSX } from 'react';
 import '../styles/FamilyTreeMobile.scss';
 import { Person, ViewProps, PersonWithSpouse } from '../interfaces/Person';
 import defaultImage from '../public/Default Image.svg';

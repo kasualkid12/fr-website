@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { JSX } from 'react';
 import '../styles/FamilyTreeDesktop.scss';
 import PersonBubble from './PersonBubble';
 import { Person, ViewProps, PersonWithSpouse } from '../interfaces/Person';

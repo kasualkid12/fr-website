@@ -30,5 +30,5 @@ export interface ViewProps {
   handlePersonClick: (id: number) => void;
   handleGoBack: () => void;
   handleGoToTop: () => void;
-  svgRef: RefObject<SVGSVGElement>;
+  svgRef: RefObject<SVGSVGElement | null>;
 }

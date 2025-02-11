@@ -3,6 +3,7 @@ package miniohandlers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 
 	miniomodule "github.com/kasualkid12/fr-website/server/modules/minioModule"
@@ -113,7 +114,13 @@ func GetObjectHandler(minioClient *minio.Client) http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(object)
+		// Optionally, set appropriate headers (e.g., Content-Type)
+		w.Header().Set("Content-Type", reqBody.ContentType)
+
+		// Stream the object directly to the response
+		if _, err := io.Copy(w, object); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 }

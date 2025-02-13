@@ -21,6 +21,7 @@ export interface PersonProps {
   spouse?: Person;
   onClick?: () => void;
   isSelf?: boolean;
+  fetchImage: (objectName: string, bucketName: string) => Promise<string>;
 }
 
 export interface ViewProps {
@@ -31,4 +32,5 @@ export interface ViewProps {
   handleGoBack: () => void;
   handleGoToTop: () => void;
   svgRef: RefObject<SVGSVGElement | null>;
+  fetchImage: (objectName: string, bucketName: string) => Promise<string>;
 }

@@ -9,6 +9,7 @@ function FamilyTreeMobile({
   handlePersonClick,
   handleGoBack,
   handleGoToTop,
+  fetchImage,
 }: ViewProps): JSX.Element {
   const createPersonBox = (persons: Person[]): JSX.Element => {
     let box: JSX.Element = <></>;

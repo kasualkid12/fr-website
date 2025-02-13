@@ -1,8 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { PersonProps } from '../interfaces/Person';
-import defaultImage from '../public/Default Image.svg'; // Adjust the path as necessary
+import defaultImage from '../public/Default Image.svg';
 
-function PersonBubble({ person, spouse, onClick, isSelf }: PersonProps) {
+function PersonBubble({
+  person,
+  spouse,
+  onClick,
+  isSelf,
+  fetchImage,
+}: PersonProps) {
+  const [personImage, setPersonImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (person.photoUrl) {
+      fetchImage(person.photoUrl, 'test-bucket').then((image) => {
+        if (isMounted) {
+          setPersonImage(image);
+        }
+      });
+    } else {
+      setPersonImage(null);
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [person.photoUrl, fetchImage]);
+
   return (
     <div
       className={`bubble ${isSelf ? 'self-bubble' : 'child-bubble'}`}
@@ -13,7 +37,7 @@ function PersonBubble({ person, spouse, onClick, isSelf }: PersonProps) {
         <div className="images-container">
           <img
             className="person-image"
-            src={person.photoUrl || defaultImage}
+            src={personImage || defaultImage}
             alt={`${person.firstName} ${person.lastName}`}
           />
           {spouse && (

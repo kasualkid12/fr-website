@@ -10,6 +10,32 @@ import '../styles/FamilyTree.scss';
 import FamilyTreeDesktop from './FamilyTreeDesktop';
 import FamilyTreeMobile from './FamilyTreeMobile';
 import { Person } from '../interfaces/Person';
+import defaultImage from '../public/Default Image.svg';
+
+export async function fetchImage(objectName: string, bucketName: string): Promise<string> {
+  try {
+    const response = await fetch('/minio/getobject', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        bucketName,
+        objectName,
+        contentType: 'image/jpeg',
+      }),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const blob = await response.blob();
+    return URL.createObjectURL(blob);
+  } catch (error) {
+    console.error('Error fetching image for object:', objectName, error);
+    // Fallback: you can either return a default URL or throw an error
+    return defaultImage;
+  }
+}
 
 /**
  * Async function to fetch persons from the backend.
@@ -100,6 +126,7 @@ function FamilyTreeComponent() {
           handleGoBack={handleGoBack}
           handleGoToTop={handleGoToTop}
           svgRef={svgRef}
+          fetchImage={fetchImage}
         />
       ) : (
         <FamilyTreeDesktop
@@ -110,6 +137,7 @@ function FamilyTreeComponent() {
           handleGoBack={handleGoBack}
           handleGoToTop={handleGoToTop}
           svgRef={svgRef}
+          fetchImage={fetchImage}
         />
       )}
     </div>

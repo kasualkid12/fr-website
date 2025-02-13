@@ -19,6 +19,7 @@ function FamilyTreeDesktop({
   handleGoBack, // The function to handle go back click
   handleGoToTop, // The function to handle go to top click
   svgRef, // The reference to the SVG element where the lines will be rendered
+  fetchImage, // The function to fetch image from the backend
 }: ViewProps): JSX.Element {
   // Render the lines whenever the persons array changes
   // useEffect(() => {
@@ -74,6 +75,7 @@ function FamilyTreeDesktop({
             spouse={selfPerson.spouse}
             isSelf={true}
             key={selfPerson.id}
+            fetchImage={fetchImage}
           />
           <div className="self-details-box">
             <div className="self-details">
@@ -103,6 +105,7 @@ function FamilyTreeDesktop({
             onClick={() => handlePersonClick(child.id)}
             isSelf={false}
             key={child.id}
+            fetchImage={fetchImage}
           />
         </div>
       ));

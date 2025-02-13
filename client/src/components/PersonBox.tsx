@@ -2,7 +2,7 @@ import React from 'react';
 import { PersonProps } from '../interfaces/Person';
 import defaultImage from '../public/Default Image.svg'; // Adjust the path as necessary
 
-function PersonBox({ person, spouse, onClick }: PersonProps) {
+function PersonBox({ person, spouse, onClick, fetchImage }: PersonProps) {
   if (!person) return null;
 
   return (

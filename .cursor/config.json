@@ -1,0 +1,25 @@
+{
+  "projects": [
+    {
+      "name": "client",
+      "root": "client",
+      "language": "typescript",
+      "src": "client/src"
+    },
+    {
+      "name": "server",
+      "root": "server",
+      "language": "go",
+      "src": "server"
+    }
+  ],
+  "defaultProject": "client",
+  "ignore": [
+    "client/node_modules",
+    "client/pkg",
+    "client/public",
+    "server/test-pictures",
+    "**/dist",
+    "**/build"
+  ]
+}

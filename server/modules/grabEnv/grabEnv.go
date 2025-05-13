@@ -24,7 +24,7 @@ var (
 var loadEnv = godotenv.Load
 
 func GrabEnv() (string, int, string, string, string, string, string, string, bool) {
-	err := loadEnv()
+	err := loadEnv("../.env")
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}

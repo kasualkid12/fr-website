@@ -53,13 +53,14 @@ func main() {
 	//---------------------HANDLERS------------------------
 	// Person handlers
 	router.HandleFunc("/persons", personhandlers.GetPersonsHandler(db)).Methods("POST")
+	router.HandleFunc("/persons/update", personhandlers.UpdatePersonHandler(db)).Methods("POST")
 
 	// Minio handlers
 	router.HandleFunc("/minio/makebucket", miniohandlers.MakeBucketHandler(minioClient)).Methods("POST")
 	router.HandleFunc("/minio/removebucket", miniohandlers.RemoveBucketHandler(minioClient)).Methods("DELETE")
 	router.HandleFunc("/minio/addobject", miniohandlers.AddObjectHandler(minioClient)).Methods("POST")
 	router.HandleFunc("/minio/removeobject", miniohandlers.RemoveObjectHandler(minioClient)).Methods("DELETE")
-	router.HandleFunc("/minio/getobject", miniohandlers.GetObjectHandler(minioClient)).Methods("GET")
+	router.HandleFunc("/minio/getobject", miniohandlers.GetObjectHandler(minioClient)).Methods("POST")
 
 	//---------------------SERVER STARTUP------------------------
 	// Configure CORS

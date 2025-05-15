@@ -12,10 +12,13 @@ import FamilyTreeMobile from './FamilyTreeMobile';
 import { Person } from '../interfaces/Person';
 import defaultImage from '../public/Default Image.svg';
 
-export async function fetchImage(objectName: string, bucketName: string): Promise<string> {
+export async function fetchImage(
+  objectName: string,
+  bucketName: string
+): Promise<string> {
   try {
-    const response = await fetch('/minio/getobject', {
-      method: 'GET',
+    const response = await fetch('http://localhost:8080/minio/getobject', {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -66,7 +69,7 @@ function getPersonsPromise(id: number): Promise<Person[]> {
 }
 
 function usePersons(id: number): Person[] {
-  // Memoize the promise so that if the id doesn’t change, we reuse the promise.
+  // Memoize the promise so that if the id doesn't change, we reuse the promise.
   const personsPromise = useMemo(() => getPersonsPromise(id), [id]);
   return use(personsPromise);
 }
@@ -81,6 +84,7 @@ function FamilyTreeComponent() {
   const [history, setHistory] = useState<number[]>([]);
   const svgRef = useRef<SVGSVGElement>(null);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 1023);
+  const [adminMode, setAdminMode] = useState<boolean>(false); // Admin mode toggle
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 1023);
@@ -117,6 +121,13 @@ function FamilyTreeComponent() {
 
   return (
     <div className="FamilyTree">
+      {/* Admin mode toggle (visible to all for now) */}
+      <button
+        style={{ position: 'absolute', top: 10, right: 10, zIndex: 100 }}
+        onClick={() => setAdminMode((prev) => !prev)}
+      >
+        {adminMode ? 'Disable Admin Controls' : 'Enable Admin Controls'}
+      </button>
       {isMobile ? (
         <FamilyTreeMobile
           persons={persons}
@@ -138,6 +149,7 @@ function FamilyTreeComponent() {
           handleGoToTop={handleGoToTop}
           svgRef={svgRef}
           fetchImage={fetchImage}
+          adminMode={adminMode}
         />
       )}
     </div>

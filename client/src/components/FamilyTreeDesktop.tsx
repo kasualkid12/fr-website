@@ -1,7 +1,8 @@
-import React, { JSX } from 'react';
+import React, { JSX, useState } from 'react';
 import '../styles/FamilyTreeDesktop.scss';
 import PersonBubble from './PersonBubble';
 import { Person, ViewProps, PersonWithSpouse } from '../interfaces/Person';
+import ImageCropperModal from './ImageCropperModal';
 
 /**
  * FamilyTreeDesktop component renders a family tree with person bubbles and lines connecting them.
@@ -20,11 +21,16 @@ function FamilyTreeDesktop({
   handleGoToTop, // The function to handle go to top click
   svgRef, // The reference to the SVG element where the lines will be rendered
   fetchImage, // The function to fetch image from the backend
+  adminMode = false,
 }: ViewProps): JSX.Element {
-  // Render the lines whenever the persons array changes
-  // useEffect(() => {
-  //   renderLines();
-  // }, [persons]);
+  // Modal state
+  const [cropperOpen, setCropperOpen] = useState(false);
+  const [cropperImage, setCropperImage] = useState<string | null>(null);
+  const [uploadTarget, setUploadTarget] = useState<{
+    person: Person;
+    type: 'self' | 'spouse';
+  } | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   /**
    * Create person bubbles for the desktop view.
@@ -76,7 +82,38 @@ function FamilyTreeDesktop({
             isSelf={true}
             key={selfPerson.id}
             fetchImage={fetchImage}
+            adminMode={adminMode}
+            onUploadPhoto={() => handleUpload(selfPerson!.id, 'self')}
+            onRemovePhoto={() => handleRemove(selfPerson!.id, 'self')}
           />
+          {adminMode && (
+            <div className="admin-controls">
+              <button onClick={() => handleUpload(selfPerson.id, 'self')}>
+                Upload Self Photo
+              </button>
+              <button onClick={() => handleRemove(selfPerson.id, 'self')}>
+                Remove Self Photo
+              </button>
+              {selfPerson.spouse && (
+                <>
+                  <button
+                    onClick={() =>
+                      handleUpload(selfPerson.spouse!.id, 'spouse')
+                    }
+                  >
+                    Upload Spouse Photo
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleRemove(selfPerson.spouse!.id, 'spouse')
+                    }
+                  >
+                    Remove Spouse Photo
+                  </button>
+                </>
+              )}
+            </div>
+          )}
           <div className="self-details-box">
             <div className="self-details">
               <p>
@@ -115,8 +152,6 @@ function FamilyTreeDesktop({
 
     return bubbles;
   };
-
-  // TODO: fix render lines function for new desktop view
 
   /**
    * Render the lines connecting the person bubbles.
@@ -165,9 +200,87 @@ function FamilyTreeDesktop({
   //   });
   // };
 
+  const handleUpload = (personId: number, type: 'self' | 'spouse') => {
+    // Find the person object
+    const person = findPersonById(personId);
+    if (!person) return;
+    setUploadTarget({ person, type });
+    // Trigger file input
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setCropperImage(ev.target?.result as string);
+      setCropperOpen(true);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleCropperClose = () => {
+    setCropperOpen(false);
+    setCropperImage(null);
+    setUploadTarget(null);
+  };
+
+  // Helper to find person by id
+  const findPersonById = (id: number): Person | undefined => {
+    for (const p of persons) {
+      if (p.id === id) return p;
+      if (p.relationship.includes('Spouse') && p.profileId === id) return p;
+    }
+    return undefined;
+  };
+
+  const handleRemove = (personId: number, type: 'self' | 'spouse') => {
+    alert(`Remove for ${type} photo of person ${personId}`);
+  };
+
+  // Compute objectName for upload if needed
+  const objectName = uploadTarget
+    ? `person_${uploadTarget.person.id}_${Date.now()}.jpg`
+    : undefined;
+
   // Return the FamilyTreeDesktop component containing the person bubbles and the SVG element
   return (
     <div className="FamilyTreeDesktop">
+      <input
+        type="file"
+        accept="image/*"
+        style={{ display: 'none' }}
+        ref={fileInputRef}
+        onChange={handleFileChange}
+      />
+      <ImageCropperModal
+        open={cropperOpen}
+        imageSrc={cropperImage}
+        onClose={handleCropperClose}
+        apiEndpoint={
+          uploadTarget ? 'http://localhost:8080/minio/addobject' : undefined
+        }
+        objectName={objectName}
+        personId={uploadTarget?.person.id}
+        formData={
+          uploadTarget && objectName
+            ? {
+                bucketName: 'test-bucket',
+                objectName: objectName,
+                contentType: 'image/jpeg',
+              }
+            : {}
+        }
+        onSuccess={() => {
+          handleCropperClose();
+          // Optionally refresh UI or show a message
+        }}
+        onError={(err) => {
+          // Optionally show error
+        }}
+      />
       {/* Go Back button */}
       {history.length > 0 && (
         <button className="go-back" onClick={handleGoBack}>

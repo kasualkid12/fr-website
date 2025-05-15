@@ -22,6 +22,9 @@ export interface PersonProps {
   onClick?: () => void;
   isSelf?: boolean;
   fetchImage: (objectName: string, bucketName: string) => Promise<string>;
+  adminMode?: boolean;
+  onUploadPhoto?: () => void;
+  onRemovePhoto?: () => void;
 }
 
 export interface ViewProps {
@@ -33,4 +36,5 @@ export interface ViewProps {
   handleGoToTop: () => void;
   svgRef: RefObject<SVGSVGElement | null>;
   fetchImage: (objectName: string, bucketName: string) => Promise<string>;
+  adminMode?: boolean;
 }

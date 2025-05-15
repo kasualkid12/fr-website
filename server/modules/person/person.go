@@ -142,3 +142,26 @@ func RearrangePersons(persons []Person) []Person {
 	return rearranged
 }
 
+// UpdatePerson updates one or more fields of a person in the database
+func UpdatePerson(db *sql.DB, personID int, updates map[string]interface{}) error {
+	if len(updates) == 0 {
+		return nil
+	}
+
+	setClauses := make([]string, 0, len(updates))
+	args := make([]interface{}, 0, len(updates)+1)
+	argIdx := 1
+	for field, value := range updates {
+		setClauses = append(setClauses, field+" = $"+fmt.Sprint(argIdx))
+		args = append(args, value)
+		argIdx++
+	}
+	args = append(args, personID)
+
+	query := "UPDATE persons SET " + strings.Join(setClauses, ", ") + " WHERE person_id = $" + fmt.Sprint(argIdx)
+	_, err := db.Exec(query, args...)
+	if err != nil {
+		return fmt.Errorf("UpdatePerson update error: %v", err)
+	}
+	return nil
+}

@@ -1,0 +1,39 @@
+@import './fonts';
+@import './colors';
+
+
+.Schedule {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: $darkmain;
+  color: $lightmain;
+  
+  h2 {
+    margin-bottom: 2px;
+  }
+  p {
+    margin-top: 2px;
+    color: rgba(250, 249, 246, 0.6);
+  }
+}
+
+.Days {
+  width: 80%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  p {
+    color: $lightmain;
+  }
+}
+
+@media (max-width: 768px) {
+  .Days {
+    flex-direction: column;
+  }
+}

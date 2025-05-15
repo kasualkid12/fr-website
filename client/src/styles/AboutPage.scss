@@ -1,0 +1,34 @@
+@import './fonts';
+@import './colors';
+
+.AboutPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: $darkmain;
+  color: $lightmain;
+}
+
+.Top {
+  margin-top: 2rem;
+  margin-bottom: .3rem;
+}
+
+.Mid {
+  margin-top: .3rem;
+  margin-bottom: .3rem;
+}
+
+.Bottom {
+  margin-top: .3rem;
+  margin-bottom: 2rem;
+}
+
+.Credit {
+  margin: 2rem;
+  width: 173px;
+}

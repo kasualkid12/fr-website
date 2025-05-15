@@ -1,0 +1,32 @@
+name: Go
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+
+    - name: Build
+      working-directory: ./server
+      run: go build -v ./...
+
+    - name: Test
+      working-directory: ./server
+      run: go test -v ./...

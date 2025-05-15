@@ -1,0 +1,17 @@
+@import './fonts';
+@import './colors';
+
+body {
+  background: $darkmain;
+  color: $lightmain;
+}
+
+.History {
+  padding-top: 5rem;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}

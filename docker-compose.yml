@@ -1,0 +1,53 @@
+services:
+  db:
+    build: .
+    container_name: fr_postgres
+    ports:
+      - '5432:5432'
+    networks:
+      - fr_network
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${PGUSER}
+      POSTGRES_PASSWORD: ${PGPASSWORD}
+      POSTGRES_DB: ${PGDBNAME}
+
+  minio:
+    image: quay.io/minio/minio
+    container_name: fr_minio
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    networks:
+      - fr_network
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_DEFAULT_BUCKETS: ${MINIO_DEFAULT_BUCKETS}
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack
+    ports:
+      - '4566:4566' # Main LocalStack edge port
+      - '4571:4571' # (Optional) Old KMS port, not needed for latest LocalStack
+    environment:
+      - SERVICES=kms, s3 # Add more AWS services as needed
+      - DEBUG=1
+      - DATA_DIR=/var/lib/localstack
+      - DEFAULT_REGION=us-east-1
+    volumes:
+      - ./localstack-data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+  fr_network:
+    driver: bridge
+
+volumes:
+  pgdata:
+  minio_data:

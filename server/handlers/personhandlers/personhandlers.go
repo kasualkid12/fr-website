@@ -33,15 +33,6 @@ func GetPersonsHandler(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-// Example request body for UpdatePersonHandler:
-// {
-//   "id": 123,
-//   "updates": {
-//     "photo_url": "person_123_self_1717771234567.jpg",
-//     "first_name": "NewName"
-//   }
-// }
-
 // UpdatePersonHandler updates one or more fields of a person
 func UpdatePersonHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

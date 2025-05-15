@@ -11,6 +11,7 @@ import (
 	"github.com/kasualkid12/fr-website/server/handlers/personhandlers"
 	grabenv "github.com/kasualkid12/fr-website/server/modules/grabEnv"
 	"github.com/kasualkid12/fr-website/server/modules/metrics"
+	miniomodule "github.com/kasualkid12/fr-website/server/modules/minioModule"
 	_ "github.com/lib/pq"
 	"github.com/minio/minio-go"
 	"github.com/rs/cors"
@@ -21,7 +22,7 @@ func main() {
 	router := mux.NewRouter()
 
 	// Read environment variables
-	host, port, user, password, dbName, minioEndpoint, minioAccessKeyID, minioSecretKey, minioUseSSL := grabenv.GrabEnv()
+	host, port, user, password, dbName, minioEndpoint, minioAccessKeyID, minioSecretKey, minioUseSSL, _, _, _, _, _ := grabenv.GrabEnv()
 
 	//---------------------DATABASE CONNECTIONS------------------------
 	// Connect to PostgreSQL
@@ -46,6 +47,9 @@ func main() {
 	}
 	fmt.Println("Connected to MinIO")
 
+	// Wrap minioClient with RealMinioClient to satisfy MinioClient interface
+	realMinioClient := &miniomodule.RealMinioClient{Client: minioClient}
+
 	//---------------------METRICS------------------------
 	// Add Prometheus metrics endpoint
 	router.Handle("/metrics", metrics.MetricsHandler())
@@ -56,11 +60,11 @@ func main() {
 	router.HandleFunc("/persons/update", personhandlers.UpdatePersonHandler(db)).Methods("POST")
 
 	// Minio handlers
-	router.HandleFunc("/minio/makebucket", miniohandlers.MakeBucketHandler(minioClient)).Methods("POST")
-	router.HandleFunc("/minio/removebucket", miniohandlers.RemoveBucketHandler(minioClient)).Methods("DELETE")
-	router.HandleFunc("/minio/addobject", miniohandlers.AddObjectHandler(minioClient)).Methods("POST")
-	router.HandleFunc("/minio/removeobject", miniohandlers.RemoveObjectHandler(minioClient)).Methods("DELETE")
-	router.HandleFunc("/minio/getobject", miniohandlers.GetObjectHandler(minioClient)).Methods("POST")
+	router.HandleFunc("/minio/makebucket", miniohandlers.MakeBucketHandler(realMinioClient)).Methods("POST")
+	router.HandleFunc("/minio/removebucket", miniohandlers.RemoveBucketHandler(realMinioClient)).Methods("DELETE")
+	router.HandleFunc("/minio/addobject", miniohandlers.AddObjectHandler(realMinioClient)).Methods("POST")
+	router.HandleFunc("/minio/removeobject", miniohandlers.RemoveObjectHandler(realMinioClient)).Methods("DELETE")
+	router.HandleFunc("/minio/getobject", miniohandlers.GetObjectHandler(realMinioClient)).Methods("POST")
 
 	//---------------------SERVER STARTUP------------------------
 	// Configure CORS

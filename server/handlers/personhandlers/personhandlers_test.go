@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -20,15 +21,17 @@ func TestGetPersonsHandler(t *testing.T) {
 	defer db.Close()
 
 	// Mock the database response
-	columns := []string{"person_id", "name", "birth_date", "death_date", "gender", "photo_url", "profile_id", "relationship", "parent_object"}
+	columns := []string{"person_id", "first_name", "last_name", "birth_date", "death_date", "gender", "photo_url", "profile_id", "relationship", "parent_object"}
 	mock.ExpectQuery("SELECT \\* FROM TREE_CHILD_SPOUSE_VW WHERE parent_object =").
 		WithArgs(3).
 		WillReturnRows(sqlmock.NewRows(columns).
-			AddRow(1, "John Doe", "2000-01-01", sql.NullTime{Valid: true, Time: time.Date(2070, 1, 1, 0, 0, 0, 0, time.UTC)}, "Male", "http://example.com/photo.jpg", 101, "son", 3))
+			AddRow(1, "John", "Doe", "2000-01-01", sql.NullTime{Valid: true, Time: time.Date(2070, 1, 1, 0, 0, 0, 0, time.UTC)}, "Male", "http://example.com/photo.jpg", 101, "son", 3))
 
-	// Create a request to pass to our handler
-	req, err := http.NewRequest("GET", "/persons", nil)
+	// Create a POST request with a valid JSON body
+	body := `{"id": 3}`
+	req, err := http.NewRequest("POST", "/persons", strings.NewReader(body))
 	assert.NoError(t, err)
+	req.Header.Set("Content-Type", "application/json")
 
 	// Record the response
 	rr := httptest.NewRecorder()

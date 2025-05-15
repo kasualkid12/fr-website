@@ -29,6 +29,21 @@ services:
     volumes:
       - minio_data:/data
 
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack
+    ports:
+      - '4566:4566' # Main LocalStack edge port
+      - '4571:4571' # (Optional) Old KMS port, not needed for latest LocalStack
+    environment:
+      - SERVICES=kms, s3 # Add more AWS services as needed
+      - DEBUG=1
+      - DATA_DIR=/var/lib/localstack
+      - DEFAULT_REGION=us-east-1
+    volumes:
+      - ./localstack-data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+
 networks:
   fr_network:
     driver: bridge

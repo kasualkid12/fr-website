@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	miniomodule "github.com/kasualkid12/fr-website/server/modules/minioModule"
-	"github.com/minio/minio-go"
 )
 
 type requestBody struct {
@@ -20,7 +19,7 @@ type requestBody struct {
 
 // ----------------------BUCKET HANDLERS------------------------
 // Make bucket
-func MakeBucketHandler(minioClient *minio.Client) http.HandlerFunc {
+func MakeBucketHandler(minioClient miniomodule.MinioClient) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var reqBody requestBody
 		if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
@@ -29,6 +28,10 @@ func MakeBucketHandler(minioClient *minio.Client) http.HandlerFunc {
 		}
 		fmt.Println(reqBody)
 		if err := miniomodule.MakeBucket(minioClient, reqBody.BucketName, reqBody.Location); err != nil {
+			if err.Error() == "Bucket already exists" {
+				w.WriteHeader(http.StatusOK)
+				return
+			}
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -37,7 +40,7 @@ func MakeBucketHandler(minioClient *minio.Client) http.HandlerFunc {
 }
 
 // Remove bucket
-func RemoveBucketHandler(minioClient *minio.Client) http.HandlerFunc {
+func RemoveBucketHandler(minioClient miniomodule.MinioClient) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var reqBody requestBody
 		if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
@@ -55,7 +58,7 @@ func RemoveBucketHandler(minioClient *minio.Client) http.HandlerFunc {
 
 // ----------------------OBJECT HANDLERS------------------------
 // Add object
-func AddObjectHandler(minioClient *minio.Client) http.HandlerFunc {
+func AddObjectHandler(minioClient miniomodule.MinioClient) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Parse the multipart form, limiting in-memory data to 10MB.
 		if err := r.ParseMultipartForm(10 << 20); err != nil {
@@ -84,7 +87,7 @@ func AddObjectHandler(minioClient *minio.Client) http.HandlerFunc {
 }
 
 // Remove object
-func RemoveObjectHandler(minioClient *minio.Client) http.HandlerFunc {
+func RemoveObjectHandler(minioClient miniomodule.MinioClient) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var reqBody requestBody
 		if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {
@@ -101,7 +104,7 @@ func RemoveObjectHandler(minioClient *minio.Client) http.HandlerFunc {
 }
 
 // Get object
-func GetObjectHandler(minioClient *minio.Client) http.HandlerFunc {
+func GetObjectHandler(minioClient miniomodule.MinioClient) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var reqBody requestBody
 		if err := json.NewDecoder(r.Body).Decode(&reqBody); err != nil {

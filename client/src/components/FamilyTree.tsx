@@ -122,12 +122,14 @@ function FamilyTreeComponent() {
   return (
     <div className="FamilyTree">
       {/* Admin mode toggle (visible to all for now) */}
-      <button
-        style={{ position: 'absolute', top: 10, right: 10, zIndex: 100 }}
-        onClick={() => setAdminMode((prev) => !prev)}
-      >
-        {adminMode ? 'Disable Admin Controls' : 'Enable Admin Controls'}
-      </button>
+      {!isMobile && (
+        <button
+          style={{ position: 'absolute', top: 10, right: 10, zIndex: 100 }}
+          onClick={() => setAdminMode((prev) => !prev)}
+        >
+          {adminMode ? 'Disable Admin Controls' : 'Enable Admin Controls'}
+        </button>
+      )}
       {isMobile ? (
         <FamilyTreeMobile
           persons={persons}

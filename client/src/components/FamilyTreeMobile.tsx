@@ -1,7 +1,8 @@
-import React, { JSX } from 'react';
+import React, { JSX, useState, useEffect } from 'react';
 import '../styles/FamilyTreeMobile.scss';
 import { Person, ViewProps, PersonWithSpouse } from '../interfaces/Person';
 import defaultImage from '../public/Default Image.svg';
+import PersonBox from './PersonBox';
 
 function FamilyTreeMobile({
   persons,
@@ -11,20 +12,27 @@ function FamilyTreeMobile({
   handleGoToTop,
   fetchImage,
 }: ViewProps): JSX.Element {
-  const createPersonBox = (persons: Person[]): JSX.Element => {
-    let box: JSX.Element = <></>;
-    let sourcePerson: PersonWithSpouse | null = null;
-    const children: PersonWithSpouse[] = [];
+  // State for main person and spouse images
+  const [mainPersonImage, setMainPersonImage] = useState<string | null>(null);
+  const [spouseImage, setSpouseImage] = useState<string | null>(null);
+  const [sourcePerson, setSourcePerson] = useState<PersonWithSpouse | null>(
+    null
+  );
+  const [children, setChildren] = useState<PersonWithSpouse[]>([]);
 
+  // Derive sourcePerson and children from persons
+  useEffect(() => {
+    let localSourcePerson: PersonWithSpouse | null = null;
+    const localChildren: PersonWithSpouse[] = [];
     for (let i = 0; i < persons.length; i++) {
-      if (!sourcePerson) {
-        sourcePerson = persons[i];
+      if (!localSourcePerson) {
+        localSourcePerson = persons[i];
         if (
           i < persons.length - 1 &&
           persons[i + 1].relationship.includes('Spouse')
         ) {
-          sourcePerson = { ...sourcePerson, spouse: persons[i + 1] };
-          i++; // Skip the next person since they are the spouse
+          localSourcePerson = { ...localSourcePerson, spouse: persons[i + 1] };
+          i++;
         }
       } else if (persons[i].relationship.includes('Child')) {
         let child: PersonWithSpouse = persons[i];
@@ -33,34 +41,54 @@ function FamilyTreeMobile({
           persons[i + 1].relationship.includes('Spouse')
         ) {
           child = { ...child, spouse: persons[i + 1] };
-          i++; // Skip the next person since they are the spouse
+          i++;
         }
-        children.push(child);
+        localChildren.push(child);
       }
     }
+    setSourcePerson(localSourcePerson);
+    setChildren(localChildren);
+  }, [persons]);
 
-    if (sourcePerson) {
-      const childBoxes = children.map((child) => (
-        <div className="child-box" key={child.id} id={`person-${child.id}`}>
-          <div
-            className={`person-box`}
-            onClick={() => handlePersonClick(child.id)}
-          >
-            <img
-              className="person-image"
-              src={child.photoUrl || defaultImage}
-              alt={`${child.firstName} ${child.lastName}`}
-            />
-            <p className="person-name">
-              {child.firstName}{' '}
-              {child.spouse ? `& ${child.spouse.firstName}` : ''}{' '}
-              {child.lastName}
-            </p>
-          </div>
-        </div>
-      ));
+  // Fetch images for main person and spouse
+  useEffect(() => {
+    let isMounted = true;
+    if (sourcePerson && sourcePerson.photoUrl) {
+      fetchImage(sourcePerson.photoUrl, 'test-bucket').then((img) => {
+        if (isMounted) setMainPersonImage(img);
+      });
+    } else {
+      setMainPersonImage(null);
+    }
+    if (sourcePerson && sourcePerson.spouse && sourcePerson.spouse.photoUrl) {
+      fetchImage(sourcePerson.spouse.photoUrl, 'test-bucket').then((img) => {
+        if (isMounted) setSpouseImage(img);
+      });
+    } else {
+      setSpouseImage(null);
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [sourcePerson, fetchImage]);
 
-      box = (
+  const childBoxes = children.map((child) => (
+    <div className="child-box" key={child.id} id={`person-${child.id}`}>
+      <PersonBox
+        person={child}
+        spouse={child.spouse}
+        onClick={() => handlePersonClick(child.id)}
+        fetchImage={fetchImage}
+      />
+    </div>
+  ));
+
+  return (
+    <div className="FamilyTreeMobile">
+      <button className="go-to-top" onClick={handleGoToTop}>
+        Top of Tree
+      </button>
+      {sourcePerson && (
         <div
           className="main-box"
           key={sourcePerson.id}
@@ -80,14 +108,14 @@ function FamilyTreeMobile({
             <div className="photo-box">
               <img
                 className="person-image"
-                src={sourcePerson.photoUrl || defaultImage}
+                src={mainPersonImage || defaultImage}
                 alt={`${sourcePerson.firstName} ${sourcePerson.lastName}`}
               />
               {sourcePerson.spouse && (
                 <div className="spouse-box">
                   <img
                     className="spouse-image"
-                    src={sourcePerson.spouse.photoUrl || defaultImage}
+                    src={spouseImage || defaultImage}
                     alt={`${sourcePerson.spouse.firstName} ${sourcePerson.spouse.lastName}`}
                   />
                   <div className="spouse-name">
@@ -116,18 +144,7 @@ function FamilyTreeMobile({
             </div>
           </div>
         </div>
-      );
-    }
-
-    return box;
-  };
-
-  return (
-    <div className="FamilyTreeMobile">
-      <button className="go-to-top" onClick={handleGoToTop}>
-        Top of Tree
-      </button>
-      {createPersonBox(persons)}
+      )}
     </div>
   );
 }

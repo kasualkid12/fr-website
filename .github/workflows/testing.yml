@@ -20,7 +20,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version-file: 'go.mod'
+          go-version-file: './server/go.mod'
           cache: true
 
       - name: Install dependencies
@@ -31,7 +31,7 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          go test ./... -race -covermode=atomic -coverprofile=coverage/coverage.out -v
+          go test ./server/... -race -covermode=atomic -coverprofile=coverage/coverage.out -v
 
       - name: Generate coverage report
         if: always()

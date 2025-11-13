@@ -24,12 +24,15 @@ jobs:
           cache: true
 
       - name: Install dependencies
+        working-directory: ./server
         run: go mod download
 
       - name: Create coverage directory
+        working-directory: ./server
         run: mkdir -p coverage
 
       - name: Run tests with coverage
+        working-directory: ./server
         run: |
           go test ./server/... -race -covermode=atomic -coverprofile=coverage/coverage.out -v
 

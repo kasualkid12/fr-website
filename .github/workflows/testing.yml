@@ -8,6 +8,8 @@ on:
 permissions:
   contents: read
   pull-requests: write
+  pages: write
+  id-token: write
 
 jobs:
   test:
@@ -106,6 +108,16 @@ jobs:
             server/coverage/
           retention-days: 30
 
+      - name: Deploy coverage to GitHub Pages
+        if: github.event_name == 'pull_request'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./coverage
+          destination_dir: coverage/pr-${{ github.event.pull_request.number }}
+          keep_files: false
+
+
       - name: Display coverage summary
         if: always()
         shell: bash
@@ -136,7 +148,9 @@ jobs:
 
             const runId = context.runId;
             const repo = context.repo;
+            const prNumber = context.issue.number;
             const artifactUrl = `https://github.com/${repo.owner}/${repo.repo}/actions/runs/${runId}`;
+            const coverageUrl = `https://${repo.owner}.github.io/${repo.repo}/coverage/pr-${prNumber}/coverage.html`;
 
             const comment = `## Test Coverage Report
 
@@ -144,7 +158,9 @@ jobs:
             ${coverage}
             \`\`\`
 
-            **[View HTML Coverage Report](${artifactUrl})** - Download the \`coverage-reports\` artifact and open \`coverage.html\` in your browser for an interactive view.`;
+            **[View Interactive Coverage Report](${coverageUrl})** - Click to view the detailed HTML coverage report in your browser.
+
+            **[Download Coverage Artifact](${artifactUrl})** - Alternative: Download the \`coverage-reports\` artifact for offline viewing.`;
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,

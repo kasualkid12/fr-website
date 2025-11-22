@@ -1,0 +1,170 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+    branches: [main, dev]
+
+permissions:
+  contents: write
+  pull-requests: write
+  pages: write
+  id-token: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./server
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: './server/go.mod'
+          cache: true
+
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Create coverage directory
+        run: mkdir -p coverage
+
+      - name: Run tests with coverage
+        run: |
+          go test ./... -race -covermode=atomic -coverprofile=coverage/coverage.out -v
+
+      - name: Generate coverage report
+        if: always()
+        shell: bash
+        run: |
+          if [ -f coverage/coverage.out ]; then
+            # Generate HTML report
+            go tool cover -html=coverage/coverage.out -o coverage/coverage.html
+            
+            # Generate function coverage report
+            go tool cover -func=coverage/coverage.out > coverage/coverage.txt
+            
+            # Start building the summary
+            echo "=== OVERALL COVERAGE ===" > coverage/summary.txt
+            go tool cover -func=coverage/coverage.out | grep "total:" >> coverage/summary.txt
+            echo "" >> coverage/summary.txt
+            
+            # Generate per-layer coverage
+            echo "=== COVERAGE BY LAYER ===" >> coverage/summary.txt
+            
+            # Get all packages in the project
+            ALL_PACKAGES=$(go list ./... 2>/dev/null | sort)
+            
+            # Extract packages with coverage and calculate their coverage
+            declare -A pkg_coverage
+            go tool cover -func=coverage/coverage.out | grep -v "total:" | awk '{
+              match($1, /^(.+)\/[^\/]+$/, arr)
+              package = arr[1]
+              if (package != "") {
+                coverage = $(NF)
+                gsub(/%/, "", coverage)
+                sum[package] += coverage
+                count[package]++
+              }
+            } END {
+              for (pkg in sum) {
+                avg = sum[pkg] / count[pkg]
+                print pkg ":" avg
+              }
+            }' > /tmp/coverage_by_pkg.txt
+            
+            # Read coverage data into associative array
+            while IFS=: read -r pkg cov; do
+              pkg_coverage["$pkg"]="$cov"
+            done < /tmp/coverage_by_pkg.txt
+            
+            # Display all packages (with coverage or 0%)
+            for pkg in $ALL_PACKAGES; do
+              if [ -n "${pkg_coverage[$pkg]}" ]; then
+                printf "%-60s %6.1f%%\n" "$pkg:" "${pkg_coverage[$pkg]}"
+              else
+                printf "%-60s %6.1f%%\n" "$pkg:" "0.0"
+              fi
+            done >> coverage/summary.txt
+            
+            echo "" >> coverage/summary.txt
+            echo "=== DETAILED FUNCTION COVERAGE ===" >> coverage/summary.txt
+            go tool cover -func=coverage/coverage.out >> coverage/summary.txt
+          else
+            echo "No coverage file generated" > coverage/summary.txt
+          fi
+
+      - name: Upload coverage reports
+        if: always() && hashFiles('server/coverage/coverage.out') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: |
+            server/coverage/
+          retention-days: 30
+
+      - name: Deploy coverage to GitHub Pages
+        if: github.event_name == 'pull_request'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./coverage
+          destination_dir: coverage/pr-${{ github.event.pull_request.number }}
+          keep_files: false
+
+
+      - name: Display coverage summary
+        if: always()
+        shell: bash
+        run: |
+          echo "=== Coverage Summary ==="
+          if [ -f coverage/summary.txt ]; then
+            cat coverage/summary.txt
+          else
+            echo "No coverage data available"
+          fi
+          echo ""
+          echo "=== Test Results ==="
+          echo "Tests completed"
+
+      - name: Comment PR with coverage
+        if: github.event_name == 'pull_request' && hashFiles('server/coverage/summary.txt') != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            let coverage = "No coverage data available";
+            try {
+              coverage = fs.readFileSync('server/coverage/summary.txt', 'utf8');
+            } catch (error) {
+              console.log('Could not read coverage file:', error);
+            }
+
+            const runId = context.runId;
+            const repo = context.repo;
+            const prNumber = context.issue.number;
+            const artifactUrl = `https://github.com/${repo.owner}/${repo.repo}/actions/runs/${runId}`;
+            const coverageUrl = `https://${repo.owner}.github.io/${repo.repo}/coverage/pr-${prNumber}/coverage.html`;
+
+            const comment = `## Test Coverage Report
+
+            \`\`\`
+            ${coverage}
+            \`\`\`
+
+            **[View Interactive Coverage Report](${coverageUrl})** - Click to view the detailed HTML coverage report in your browser.
+
+            **[Download Coverage Artifact](${artifactUrl})** - Alternative: Download the \`coverage-reports\` artifact for offline viewing.`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
